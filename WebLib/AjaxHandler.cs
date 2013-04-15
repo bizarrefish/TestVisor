@@ -121,40 +121,40 @@ namespace Bizarrefish.WebLib
 					string reqKey = JSONRequest<object>.GetKey(jreq);
 					object argsObj = JSONRequest<object>.GetArgs(jreq);
 					
+					TaskRunner<object> runner = null;
+					
+					bool newRunner = false;
+					
 					if(reqKey == null)
 					{
 						// New request
-						var runner = new TaskRunner<object>(() => jsf.Function(argsObj, session));
-						
-						jresp.Status = ResponseStatus.BUSY.ToString();
-						jresp.Key = (keyCounter++).ToString();
-						jresp.ErrorText = "";
-						jresp.Result = null;
-						
-						tasks[jresp.Key] = runner;
-						return Utils.Serializer.Serialize(jresp);
+						runner = new TaskRunner<object>(() => jsf.Function(argsObj, session));
+						// At this point, we may or may not have already completed the task
+						reqKey = (keyCounter++).ToString ();
+						newRunner = true;
+					}
+					else if (!tasks.TryGetValue(reqKey, out runner))
+						throw new Exception("Invalid Request Key");
+					
+					// We send the key back with the response.
+					jresp.Key = reqKey;
+					
+					bool error = false;
+					if(runner.CheckDone(ref error, ref jresp.Result, ref jresp.ErrorText))
+					{
+						jresp.Status = (error ? ResponseStatus.ERROR : ResponseStatus.SUCCESS).ToString();
 					}
 					else
 					{
-						// Polling
-						TaskRunner<object> runner;
-						if(tasks.TryGetValue(reqKey, out runner))
-						{
-							jresp.Key = reqKey;
-							bool error = false;
-							if(runner.CheckDone(ref error, ref jresp.Result, ref jresp.ErrorText))
-							{
-								jresp.Status = (error ? ResponseStatus.ERROR : ResponseStatus.SUCCESS).ToString();
-								
-							}
-							else
-							{
-								jresp.Status = ResponseStatus.BUSY.ToString();
-							}
-						}
-						else throw new Exception("Invalid key");
+						// This is gonna take a while
+						
+						// If we only just started this task,
+						// stick it in the dictionary
+						if(newRunner) tasks[reqKey] = runner;
+						
+						// We're busy now.
+						jresp.Status = ResponseStatus.BUSY.ToString();
 					}
-					
 				}
 				else throw new Exception("Invalid function: " + url);
 			}

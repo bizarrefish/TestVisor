@@ -19,6 +19,7 @@ namespace Bizarrefish.WebLib
 			this.func = func;
 			TaskThread = new Thread(Run);
 			TaskThread.Start ();
+			TaskThread.Join(500); // Wait here in case it's a quickie.
 		}
 		
 		void Run()
