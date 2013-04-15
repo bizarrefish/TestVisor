@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>Visor</title>
+		<link rel="stylesheet" type="text/css" href="style.css" ></link>
+	</head>
+	<body>
+		<div class="header">
+				<h1>TestVisor Web Interface</h1>
+		</div>
+		<div class="mainContainer">
+			<div class="machineList">
+				<h3>Available Machines</h2>
+				<div class="machineListItem"></div>
+			</div>
+		
+			<div class="machinePanel">
+				<h2>testrunner.bizarrefish.org.uk - Running</h2>
+				<hr>
+				<div class="listModule">
+					<div class="heading">Machine Information</div>
+					<div class="desc">Information for this machine</div>
+		
+					<ul>
+						<li>Machine name: Testrunner</li>
+						<li>Memory size: 300MB</li>
+						<li>Hard disk capacity: 45GB</li>
+					</ul>
+				</div>
+				<div class="listModule">
+					<div class="heading">Snapshots</div>
+					<div class="desc">Snapshots for this machine</div>
+		
+					<ul>
+						<li>Snapshot</li>
+						<li>Snapshot2</li>
+					</ul>
+				</div>
+		
+				<div class="listModule">
+					<div class="heading">Console</div>
+					<div class="desc">Live feed from this machine</div>
+		
+					<div style="width:300px; height:300px;background-color:blue;"></div>
+				</div>
+			</div>
+		
+		</div>
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="ajax.js"></script>
+		<script type="text/javascript" src="ajax-stubs.js"></script>
+		<script type="text/javascript">
+			var machineIds = [];
+			
+			function MakeMachineRowId(machineId)
+			{
+				return "machine" + machineId;
+			}
+			
+			function UpdateMachineStatus(machineId)
+			{
+				GetMachineStatus(function(status)
+				{
+					var rowId = MakeMachineRowId(machineId);
+					$("div#" + rowId + " td.status").html(status);
+				}, {machine: machineId});
+			}
+			
+			function MakeMachineButton(machine)
+			{
+				var id = MakeMachineRowId(machine.Id);
+				return "<div class=\"machineListItem\">" +
+						machine.Name
+						"</div>";
+			}
+			
+			function ClearMachines()
+			{
+				$("div.machineList div.machineListItem").remove();
+			}
+			
+			function RefreshMachines()
+			{
+				var machines = GetMachines(function(machines)
+				{
+					ClearMachines();
+					for(var i in machines)
+					{
+						// Add machine to row
+						$("div.machineList").append(MakeMachineButton(machines[i]));
+			
+						var id = machines[i].Id;
+						
+						// Update status
+						UpdateMachineStatus(id);
+					}
+				});
+			}
+			
+			$(document).ready(function()
+			{
+				RefreshMachines();
+				setInterval(function()
+				{
+					RefreshMachines();
+				}, 2000);
+			});
+		</script>
+	</body>
+</html>
