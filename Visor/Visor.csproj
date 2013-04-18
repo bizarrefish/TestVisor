@@ -33,7 +33,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Visor.cs" />
-    <Compile Include="AjaxWork.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

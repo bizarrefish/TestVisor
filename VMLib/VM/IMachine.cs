@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Bizarrefish.VMLib
 {
@@ -43,6 +44,11 @@ namespace Bizarrefish.VMLib
 		
 		VMProperties LoadProperties();
 		void SaveProperties(VMProperties props);
+		
+		bool PutFile(string path, Stream s);
+		Stream GetFile(string path);
+		
+		IEnumerable<string> ListFiles(string directory);
 		
 		bool DownloadFile(string url, string destination);
 		ProgramResult RunProgram(string programName, IDictionary<string, string> env);

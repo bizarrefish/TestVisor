@@ -6,7 +6,7 @@ using System.Linq;
 namespace Bizarrefish.VMTestLib
 {
 	
-	public interface ITestPlanNode
+	/*public interface ITestPlanNode
 	{
 		int LineNumber { get; set;}
 	}
@@ -145,6 +145,6 @@ namespace Bizarrefish.VMTestLib
 				}
 			};
 		}
-	}
+	}*/
 }
 

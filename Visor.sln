@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLib", "WebLib\WebLib.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLibTest", "WebLibTest\WebLibTest.csproj", "{6F6EE16E-47B4-427A-A9FB-2F82212AA90E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMAgent", "VMAgent\VMAgent.csproj", "{4F03285F-69C7-4149-9B38-A95877C7FF8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,10 @@ Global
 		{29A1C733-00C8-4DE5-B602-7A6F5FBDC9A7}.Debug|x86.Build.0 = Debug|Any CPU
 		{29A1C733-00C8-4DE5-B602-7A6F5FBDC9A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{29A1C733-00C8-4DE5-B602-7A6F5FBDC9A7}.Release|x86.Build.0 = Release|Any CPU
+		{4F03285F-69C7-4149-9B38-A95877C7FF8A}.Debug|x86.ActiveCfg = Debug|x86
+		{4F03285F-69C7-4149-9B38-A95877C7FF8A}.Debug|x86.Build.0 = Debug|x86
+		{4F03285F-69C7-4149-9B38-A95877C7FF8A}.Release|x86.ActiveCfg = Release|x86
+		{4F03285F-69C7-4149-9B38-A95877C7FF8A}.Release|x86.Build.0 = Release|x86
 		{6F6EE16E-47B4-427A-A9FB-2F82212AA90E}.Debug|x86.ActiveCfg = Debug|x86
 		{6F6EE16E-47B4-427A-A9FB-2F82212AA90E}.Debug|x86.Build.0 = Debug|x86
 		{6F6EE16E-47B4-427A-A9FB-2F82212AA90E}.Release|x86.ActiveCfg = Release|x86

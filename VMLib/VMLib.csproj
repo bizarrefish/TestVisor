@@ -40,6 +40,7 @@
     <Compile Include="VM\Virtualbox\Driver.cs" />
     <Compile Include="VM\Virtualbox\Utils.cs" />
     <Compile Include="VM\IMachine.cs" />
+    <Compile Include="DynamicIdentity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

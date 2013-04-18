@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Bizarrefish.VMTestLib
 {
-	public class DummyTest : ITest
+	/*public class DummyTest : ITest
 	{
 		public TestResult Result;
 		public int WaitTime = 3000;
@@ -93,6 +93,6 @@ namespace Bizarrefish.VMTestLib
 		{
 			new TestTest();
 		}
-	}
+	}*/
 }
 

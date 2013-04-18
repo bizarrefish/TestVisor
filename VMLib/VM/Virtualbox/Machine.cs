@@ -168,6 +168,20 @@ namespace Bizarrefish.VMLib.Virtualbox
 				}
 			}
 		}
+		public bool PutFile (string path, System.IO.Stream s)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public System.IO.Stream GetFile (string path)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IEnumerable<string> ListFiles (string directory)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 
