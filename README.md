@@ -5,52 +5,52 @@ Software to manage automated testing in a virtualized environment.
 
 The Vision
 ----------
-There will be a nice ajax web interface, offering complete control of tests, testplans and virtual machines.
-We'll also be able to stream a live feed from the VM via a video tag and some kind of RDP to OGG bridge or something :)
+A virtual machine hypervisor manager (or "Führer") able to run sequences of tests on a virtual machine instance,
+making use of snapshotting to deal with real world automated testing in a state-controlled way.
+There'll be a nice web interface to control everything from, and support for multiple test plans.
 
-### Test Plans
-A test plan brings together a collection of tests in a sequenced hierarchy, and may be expressed thus:
-> TestPlan: Testplan-001  
-> {  
->   InstallerTest64 | InstallerTest32  
->   {  
->   Database1Test | Database2Test  
->   OpenDocumentsTest  
->   UninstallerTest  
->   }  
->   UninstallerTest  
-> }  
+Project Status
+--------------
+Still drawing lines in the sand, some abstractions fairly complete.
+Can manage batch file tests with test harness code to operate everything,
+collecting results into the host's filesystem. No real work on the Web side thus far.
 
-The resulting sequence of actions would be:
+Concepts:
+---------
 
-1. Snapshot 1
-2. InstallerTest64
-3. Snapshot 2
-4. Database1Test
-5. OpenDocumentsTest
-6. UninstallerTest
-7. Restore 2
-8. Database2Test
-9. Restore 1
-10. InstallerTest32
-11. Snapshot 3
-12. Database1Test
-13. OpenDocumentsTest
-14. UninstallerTest
-15. Restore 3
-16. Database2Test
-17. OpenDocumentsTest
-18. UninstallerTest
-19. Restore 2
-20. UninstallerTest
+### VM Driver
+A backend for talking to a hypervisor.
+Currently supported are:
+- Oracle VirtualBox
 
+### VM Agent
+Program to run on the guest, providing file upload/download, directory inspection and program control.
+Will provide live screen once the rest of the solution is ready.
+
+### Test Driver
+Used to manage a number tests of a particular kind.
+A test driver must know how to accept uploaded tests in some format or another,
+process and store them away, download the necessary parts to the guest, invoke the test
+and pick up the results.
+Currently supported are:
+- Windows Batch Files
+
+In Future:  
+- TestComplete
+- You name it
+
+### Test Plan
+A representation of tests to run on the target along with information to control snapshotting.
+Currently undecided; will likely be exposed as an API for an embedded javascript engine before anything else.
+Can use [Blockly|http://code.google.com/p/blockly/] on the frontend :)
 
 The Components:
 --------------
-- VMLib
-- VMTestLib
-- WebLib
-- TestVisor
+
+### VMAgent
+Executable server which runs the guest, providing a kind of combined FTP/SSH functionality over HTTP.
+Also includes a library which wraps up communication with the server.
+This will be extended to include a video feed at some point.
 
 ### VMLib
 Abstraction layer for various hypervisors.
