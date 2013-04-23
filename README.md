@@ -13,7 +13,8 @@ Project Status
 --------------
 Still drawing lines in the sand, some abstractions fairly complete.
 Can manage batch file tests with test harness code to operate everything,
-collecting results into the host's filesystem. No real work on the Web side thus far.
+collecting results into the host's filesystem. No real work on the Web side thus far.  
+There's a [Video](http://www.youtube.com/watch?v=g7Hf0I2mp88)
 
 Concepts:
 ---------
