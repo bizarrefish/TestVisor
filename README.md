@@ -7,7 +7,8 @@ The Vision
 ----------
 A virtual machine hypervisor manager (or "Führer") able to run sequences of tests on a virtual machine instance,
 making use of snapshotting to deal with real world automated testing in a state-controlled way.
-There'll be a nice web interface to control everything from, and support for multiple test plans.
+There'll be a nice web interface to control everything from, a video feed
+and support for multiple hypervisors and test types.
 
 Project Status
 --------------
@@ -28,10 +29,11 @@ Currently supported are:
 Program to run on the guest, providing file upload/download, directory inspection and program control.
 Will provide live screen once the rest of the solution is ready.
 
+<a id="testDrivers"></a>
 ### Test Driver
 Used to manage a number tests of a particular kind.
 A test driver must know how to accept uploaded tests in some format or another,
-process and store them away, download the necessary parts to the guest, invoke the test
+process and store them away, download the necessary parts to the guest, invoke the test on the guest
 and pick up the results.  
 Currently supported are:
 - Windows Batch Files
