@@ -20,7 +20,7 @@ Concepts:
 
 ### VM Driver
 A backend for talking to a hypervisor.
-Currently supported are:
+Currently supported are:  
 - Oracle VirtualBox
 
 ### VM Agent
@@ -31,7 +31,7 @@ Will provide live screen once the rest of the solution is ready.
 Used to manage a number tests of a particular kind.
 A test driver must know how to accept uploaded tests in some format or another,
 process and store them away, download the necessary parts to the guest, invoke the test
-and pick up the results.
+and pick up the results.  
 Currently supported are:
 - Windows Batch Files
 
@@ -41,8 +41,8 @@ In Future:
 
 ### Test Plan
 A representation of tests to run on the target along with information to control snapshotting.
-Currently undecided; will likely be exposed as an API for an embedded javascript engine before anything else.
-Can use [Blockly|http://code.google.com/p/blockly/] on the frontend :)
+Currently undecided; will likely be exposed as an API for an embedded javascript engine before anything else.  
+Can use [Blockly](http://code.google.com/p/blockly/) on the frontend :)
 
 The Components:
 --------------
