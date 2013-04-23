@@ -46,6 +46,7 @@
     <Compile Include="TestRepository.cs" />
     <Compile Include="TestDrivers\WindowsBatch.cs" />
     <Compile Include="FileBasedTestRepository.cs" />
+    <Compile Include="FileBasedResultBin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -53,5 +54,8 @@
       <Project>{29A1C733-00C8-4DE5-B602-7A6F5FBDC9A7}</Project>
       <Name>VMLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BatchTest.bat" />
   </ItemGroup>
 </Project>

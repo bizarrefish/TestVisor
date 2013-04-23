@@ -3,9 +3,47 @@ using Bizarrefish.VMLib.Virtualbox;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+using Bizarrefish.VMTestLib.TestDrivers.WindowsBatch;
+using System.IO;
 
 namespace Bizarrefish.VMTestLib
 {
+	public static class Program
+	{
+		public static void Main(string[] args)
+		{
+			var vmDriver = new VirtualboxDriver();
+			
+			var machine = vmDriver.Machines.Where (m => m.Name == "Windows 7").First();
+			
+			var batchDriver = new BatchFileDriver();
+			
+			var resultBin = new FileBasedResultBin("../../ResultBin");
+			
+			batchDriver.Repo = new FileBasedTestRepository("../../BatchTestRepo");
+			
+			var testFile = "../../BatchTest.bat";
+			
+			var testName = "BatchTest";
+			
+			foreach(var test in batchDriver.Tests)
+				batchDriver.RemoveTest(test);
+			
+			Console.WriteLine("Installing test...");
+			using(FileStream fs = File.OpenRead (testFile))
+			{
+				batchDriver.InstallTest(testName, fs);
+			}
+			
+			Console.WriteLine("Initializing VM...");
+			var initSnapshotId = machine.GetSnapshots().Where(ss => ss.Name == "TEST_INIT").First().Id;
+			machine.Start (initSnapshotId);
+			
+			Console.WriteLine ("Running test...");
+			batchDriver.RunTest(testName, machine, resultBin, new Dictionary<string, string>());
+		}
+	}
+	
 	/*public class DummyTest : ITest
 	{
 		public TestResult Result;

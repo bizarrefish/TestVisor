@@ -46,12 +46,12 @@ namespace Bizarrefish.VMLib
 		void SaveProperties(VMProperties props);
 		
 		bool PutFile(string path, Stream s);
-		Stream GetFile(string path);
+		bool GetFile(string path, Stream s);
 		
 		IEnumerable<string> ListFiles(string directory);
 		
 		bool DownloadFile(string url, string destination);
-		ProgramResult RunProgram(string programName, IDictionary<string, string> env);
+		ProgramResult RunProgram(string programName, string args, string workingDir, IDictionary<string, string> env);
 	}
 }
 

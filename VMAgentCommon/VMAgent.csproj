@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{29A1C733-00C8-4DE5-B602-7A6F5FBDC9A7}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Bizarrefish.VMLib</RootNamespace>
-    <AssemblyName>Bizarrefish.VMLib</AssemblyName>
+    <ProjectGuid>{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>VMAgent</RootNamespace>
+    <AssemblyName>VMAgentCommon</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,23 +30,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="Mono.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="Mono.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="VM\IVMDriver.cs" />
-    <Compile Include="VM\VMProperties.cs" />
-    <Compile Include="VM\Virtualbox\Machine.cs" />
-    <Compile Include="VM\Virtualbox\Snapshot.cs" />
-    <Compile Include="VM\Virtualbox\Driver.cs" />
-    <Compile Include="VM\Virtualbox\Utils.cs" />
-    <Compile Include="VM\IMachine.cs" />
-    <Compile Include="DynamicIdentity.cs" />
+    <Compile Include="VMAgentServer.cs" />
+    <Compile Include="RemoteInterface.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\VMAgentCommon\VMAgent.csproj">
-      <Project>{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}</Project>
-      <Name>VMAgent</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

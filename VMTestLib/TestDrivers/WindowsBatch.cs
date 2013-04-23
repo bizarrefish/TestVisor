@@ -12,11 +12,18 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 		
 		class BatchFileDriverData
 		{
-			public IList<string> Tests;
+			public IList<string> Tests = new List<string>();
 		}
 		
 		public ITestRepository Repo { get; set; }
-		public IEnumerable<string> Tests { get; set; }
+		public IEnumerable<string> Tests {
+			get
+			{
+				var data = Repo.Load<BatchFileDriverData>();
+				return data.Tests;
+			}
+		}
+		
 		
 		public void InstallTest (string name, Stream source)
 		{
@@ -26,7 +33,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			data.Tests.Add(name);
 			Repo.Store (data);
 		}
-
+		 
 		public void RemoveTest (string name)
 		{
 			Repo.DeleteResource(name);
@@ -38,22 +45,26 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 		public void RunTest (string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
 		{
 			ITestResource res = Repo.GetResource(name);
-			string targetFileName = TestPathPrefix + name + ".bat";
+			string targetFileName = TestPathPrefix + name + "\\" + name + ".bat";
 			using (Stream s = res.Read())
 			{
 				machine.PutFile(targetFileName, s);
 			}
 			
-			ProgramResult result = machine.RunProgram(targetFileName, env);
+			ProgramResult result = machine.RunProgram(targetFileName, "", TestPathPrefix + name + "\\", env);
 			
 			// Hoover up artifacts  *SLUURRRRRP*
-			var artifacts = machine.ListFiles(TestPathPrefix);
+			var artifacts = machine.ListFiles(TestPathPrefix + name + "\\");
 			foreach(var fileName in artifacts)
 			{
-				using(Stream s = machine.GetFile(fileName))
+				string tempFile = Path.GetTempFileName();
+				using(FileStream fs = File.Create (tempFile))
 				{
-					bin.PutArtifact(fileName, s);
+					machine.GetFile (fileName, fs);
+					fs.Seek (0, SeekOrigin.Begin);
+					bin.PutArtifact(fileName, fs);
 				}
+				File.Delete(tempFile);
 			}
 			
 			// Get RESULTS

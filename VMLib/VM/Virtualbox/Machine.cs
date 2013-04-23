@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Threading;
 
 using Bizarrefish.VMLib;
+using Bizarrefish.VMAgent;
+using System.IO;
 
 namespace Bizarrefish.VMLib.Virtualbox
 {	
@@ -15,12 +17,19 @@ namespace Bizarrefish.VMLib.Virtualbox
 		SnapshotManager snapshotManager;
 		VirtualboxDriver driver;
 		
+		IRemoteVMAgent agent;
+		
+		const string VBoxIP = "10.0.2.15";
+		
+		
 		public VirtualboxMachine(VirtualboxDriver driver, string name, string uuid)
 		{
 			this.uuid = uuid;
 			this.name = name;
 			snapshotManager = new SnapshotManager(uuid);
 			this.driver = driver;
+			
+			this.agent = new RemoteVMAgent("localhost", 9002);
 		}
 		
 
@@ -143,44 +152,41 @@ namespace Bizarrefish.VMLib.Virtualbox
 			}
 		}
 
-		public ProgramResult RunProgram (string programName, IDictionary<string, string> env)
+		public ProgramResult RunProgram (string programName, string args, string workingDir, IDictionary<string, string> env)
 		{
-			if(env.Count > 0)
-				throw new NotImplementedException("Environmental controls offline");
+			string progId = agent.StartProgram(programName, workingDir, args, env);
 			
-			lock(driver)
+			while(true)
 			{
-				IEnumerable<string> output;
-				string argString = string.Format(
-					"guestcontrol {0} execute --image \"{1}\" --wait-exit --username Administrator", uuid, programName);
-				if(VirtualboxUtils.VBoxManage(argString, out output))
+				Bizarrefish.VMAgent.ProgramResult result = agent.GetProgramResult(progId);
+				if(result.Complete == true)
 				{
-					return new ProgramResult
+					return new ProgramResult()
 					{
-						ExitCode = 0,
-						StandardOutput = output.Aggregate("", (acc, el) => acc + "\n" + el),
-						StandardError = ""
+						ExitCode = result.ExitCode,
+						StandardOutput = result.StandardOutput,
+						StandardError = result.StandardError
 					};
 				}
-				else
-				{
-					return new ProgramResult() { ExitCode = 1 };
-				}
+				// Wait a sec
+				Thread.Sleep (1000);
 			}
 		}
 		public bool PutFile (string path, System.IO.Stream s)
 		{
-			throw new NotImplementedException ();
+			agent.PutFile(s, path);
+			return true;
 		}
 
-		public System.IO.Stream GetFile (string path)
+		public bool GetFile (string path, Stream s)
 		{
-			throw new NotImplementedException ();
+			agent.GetFile(path, s);
+			return true;
 		}
 
 		public IEnumerable<string> ListFiles (string directory)
 		{
-			throw new NotImplementedException ();
+			return agent.GetFileList(directory);
 		}
 	}
 }

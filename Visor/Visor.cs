@@ -15,7 +15,6 @@ namespace Visor
 	public class VisorSession : IPollingAjaxMethodSession<object>
 	{
 		public int number = 0;
-		//public WorkSubmitter<object> subm = new WorkSubmitter<object>(Visor.W);
 
 		public string CurrentAjaxMethod { get; set; }
 		public object AjaxWorkResult { get; set; }

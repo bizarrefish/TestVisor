@@ -98,6 +98,7 @@ namespace Bizarrefish.VMTestLib
 			string indexFile = baseDir + "/" + IndexFileName;
 			this.blobPath = baseDir + "/" + BlobFileName;
 			
+			if(!Directory.Exists(baseDir)) Directory.CreateDirectory(baseDir);
 			
 			if(File.Exists(indexFile))
 			{
@@ -126,9 +127,12 @@ namespace Bizarrefish.VMTestLib
 			File.WriteAllText(blobPath,jss.Serialize(blob));
 		}
 
-		public TBlob Load<TBlob> ()
+		public TBlob Load<TBlob> () where TBlob : new()
 		{
-			return jss.Deserialize<TBlob>(File.ReadAllText(blobPath));
+			if(File.Exists (blobPath))
+				return jss.Deserialize<TBlob>(File.ReadAllText(blobPath));
+			else
+				return new TBlob();
 		}
 
 		public ITestResource CreateResource (string name)
