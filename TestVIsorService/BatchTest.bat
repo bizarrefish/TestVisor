@@ -6,4 +6,4 @@ ECHO This is a batch file test!
 >>test.txt ECHO This is getting written to test.txt
 ECHO This is getting written to stdout
 
-IF DEFINED PLEASEFAIL THEN Exit 1
+IF DEFINED PLEASEFAIL (Exit 1)
