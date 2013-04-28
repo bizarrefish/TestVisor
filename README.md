@@ -14,8 +14,14 @@ Project Status
 --------------
 Still drawing lines in the sand, some abstractions fairly complete.
 Can manage batch file tests with test harness code to operate everything,
-collecting results into the host's filesystem. No real work on the Web side thus far.  
+collecting results into the host's filesystem.
 There's a [Video](http://www.youtube.com/watch?v=g7Hf0I2mp88)
+
+Some tinkering with the web frontend going on; Just layout and icons, nothing working yet.
+Will probably go for an 100% ajax approach(rendering all done browser side).
+Other frontends may pop up(CLI, for example).
+Mozilla Rhino scripting engine integrated and able to execute test plans.
+
 
 Concepts:
 ---------
@@ -44,11 +50,15 @@ In Future:
 
 ### Test Plan
 A representation of tests to run on the target along with information to control snapshotting.
-Currently undecided; will likely be exposed as an API for an embedded javascript engine before anything else.  
-Can use [Blockly](http://code.google.com/p/blockly/) on the frontend :)
+Currently using an embedded Mozilla Rhino (via IKVM) to do this. May end up being the best choice.  
+Can use [Blockly](http://code.google.com/p/blockly/) later :)
 
 The Components:
 --------------
+
+### TestVisorService
+This 'IS' TestVisor's programmer-facing frontend. 
+Web, Command line or other user-facing frontends talk to this.
 
 ### VMAgent
 Executable server which runs the guest, providing a kind of combined FTP/SSH functionality over HTTP.
