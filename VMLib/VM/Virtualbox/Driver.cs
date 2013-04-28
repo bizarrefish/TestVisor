@@ -17,6 +17,12 @@ namespace Bizarrefish.VMLib.Virtualbox
 			}
 		}
 		
+		public string Name {
+			get {
+				return "Virtualbox";
+			}
+		}
+		
 		void LoadMachines()
 		{
 			machineMap.Clear();

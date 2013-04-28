@@ -72,6 +72,11 @@ namespace Bizarrefish.VMTestLib
 				Utils.CopyStream(s, outStream);
 			}
 		}
+		
+		public Stream Write()
+		{
+			return File.OpenWrite(Path);
+		}
 	}
 	
 	public class FileBasedTestRepository : ITestRepository

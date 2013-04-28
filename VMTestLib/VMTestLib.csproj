@@ -35,7 +35,12 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="Mono.Web" />
+    <Reference Include="IKVM.OpenJDK.Core">
+      <HintPath>..\..\..\..\..\..\usr\lib\ikvm\IKVM.OpenJDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino">
+      <HintPath>..\Libs\Rhino.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -47,6 +52,7 @@
     <Compile Include="TestDrivers\WindowsBatch.cs" />
     <Compile Include="FileBasedTestRepository.cs" />
     <Compile Include="FileBasedResultBin.cs" />
+    <Compile Include="JSTestPlan.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

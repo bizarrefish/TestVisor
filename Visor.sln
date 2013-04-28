@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLibTest", "WebLibTest\We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMAgent", "VMAgentCommon\VMAgent.csproj", "{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVisorService", "TestVIsorService\TestVisorService.csproj", "{F0B25C15-C689-4235-A1F9-0012F22BB7CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -39,6 +41,10 @@ Global
 		{E3A3E527-5F64-442E-BF66-8065149E7402}.Debug|x86.Build.0 = Debug|Any CPU
 		{E3A3E527-5F64-442E-BF66-8065149E7402}.Release|x86.ActiveCfg = Release|Any CPU
 		{E3A3E527-5F64-442E-BF66-8065149E7402}.Release|x86.Build.0 = Release|Any CPU
+		{F0B25C15-C689-4235-A1F9-0012F22BB7CB}.Debug|x86.ActiveCfg = Debug|x86
+		{F0B25C15-C689-4235-A1F9-0012F22BB7CB}.Debug|x86.Build.0 = Debug|x86
+		{F0B25C15-C689-4235-A1F9-0012F22BB7CB}.Release|x86.ActiveCfg = Release|x86
+		{F0B25C15-C689-4235-A1F9-0012F22BB7CB}.Release|x86.Build.0 = Release|x86
 		{FB525DEC-90E2-4D2F-9834-B6FF9613B165}.Debug|x86.ActiveCfg = Debug|x86
 		{FB525DEC-90E2-4D2F-9834-B6FF9613B165}.Debug|x86.Build.0 = Debug|x86
 		{FB525DEC-90E2-4D2F-9834-B6FF9613B165}.Release|x86.ActiveCfg = Release|x86

@@ -40,7 +40,37 @@ namespace Bizarrefish.VMTestLib
 			machine.Start (initSnapshotId);
 			
 			Console.WriteLine ("Running test...");
-			batchDriver.RunTest(testName, machine, resultBin, new Dictionary<string, string>());
+			JSTestRunner testRunner = new JSTestRunner(new ITestDriver[] { batchDriver }, machine, resultBin);
+			
+			string testCode =
+@"
+
+var InitialSnapshot
+
+Debug('This is some javascript code!');
+Debug('Lets start by taking a snapshot');
+InitialSnapshot = Snapshot();
+Debug('Heres the snapshot: ' + InitialSnapshot);
+
+Debug('Time to run a test! Here, we will be telling it to fail...')
+var firstResult = BatchTest({PLEASEFAIL: true});
+Debug('Test over! The result was: ' + firstResult);
+if(firstResult !== false)
+{
+	throw new Error('That should not have worked... Oops');
+}
+
+Debug('Now lets revert to the last snapshot and run the test again.');
+Debug('Reverting....');
+InitialSnapshot.Restore();
+Debug('Done. Now we will run the test in a non-faily way');
+var secondResult = BatchTest();
+Debug('Awesome! The result was: ' + secondResult);
+";
+			
+			testRunner.Execute(testCode);
+			
+			//batchDriver.RunTest(testName, machine, resultBin, new Dictionary<string, string>());
 		}
 	}
 	

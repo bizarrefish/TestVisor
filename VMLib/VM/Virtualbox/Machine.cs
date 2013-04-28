@@ -80,6 +80,8 @@ namespace Bizarrefish.VMLib.Virtualbox
 				snapshotManager.RestoreSnapshot(snapshotId);
 
 				VirtualboxUtils.VBoxManage("startvm " + uuid);
+				Thread.Sleep (5000);
+				
 			}
 		}
 	

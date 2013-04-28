@@ -6,6 +6,13 @@ using Bizarrefish.VMLib;
 namespace Bizarrefish.VMTestLib
 {	
 	
+	public enum TestResult
+	{
+		PASSED,
+		FAILED,
+		ERRORED
+	}
+	
 	/// <summary>
 	/// This class manages a repository of tests
 	/// and knows how to run them.
@@ -14,13 +21,20 @@ namespace Bizarrefish.VMTestLib
 	{	
 		ITestRepository Repo { set; }
 		
+		string[] FileExtensions { get; }
+		
+		string Name { get; }
+		string Description { get; }
+		
+		string Id { get; }
+		
 		void InstallTest(string name, Stream source);
 		
 		void RemoveTest(string name);
 		
 		IEnumerable<string> Tests { get; }
 		
-		void RunTest(string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env);
+		TestResult RunTest(string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env);
 	}
 }
 

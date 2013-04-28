@@ -49,6 +49,7 @@
     <None Include="WebStatic\Dashboard.html" />
     <None Include="WebStatic\style.css" />
     <None Include="WebStatic\jquery-1.7.2.min.js" />
+    <None Include="WebStatic\divList.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">

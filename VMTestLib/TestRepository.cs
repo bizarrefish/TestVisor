@@ -13,6 +13,7 @@ namespace Bizarrefish.VMTestLib
 	{
 		Stream Read();
 		void Write(Stream s);
+		Stream Write();
 	}
 	
 	/// <summary>
@@ -36,7 +37,7 @@ namespace Bizarrefish.VMTestLib
 	/// </summary>
 	public interface ITestResultBin
 	{
-		void PutResult(string testName, bool success, string detail);
+		void PutDetail(string name, string detail);
 		void PutArtifact(string name, Stream stream);
 	}
 }

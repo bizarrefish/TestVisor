@@ -42,7 +42,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			Repo.Store (data);
 		}
 
-		public void RunTest (string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
+		public TestResult RunTest (string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
 		{
 			ITestResource res = Repo.GetResource(name);
 			string targetFileName = TestPathPrefix + name + "\\" + name + ".bat";
@@ -67,16 +67,43 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 				File.Delete(tempFile);
 			}
 			
+			bin.PutDetail("Standard Output", result.StandardOutput);
+			bin.PutDetail("Standard Error", result.StandardError);
+			
 			// Get RESULTS
 			if(result.ExitCode == 0)
 			{
-				bin.PutResult(name, true, result.StandardOutput);
+				return TestResult.PASSED;
 			}
 			else
 			{
-				bin.PutResult(name, false, result.StandardError);
+				return TestResult.ERRORED;
 			}
 		}		
+
+		public string[] FileExtensions {
+			get {
+				return new[] { ".bat" };
+			}
+		}
+
+		public string Name {
+			get {
+				return "Windows Batch File";
+			}
+		}
+
+		public string Description {
+			get {
+				return Name;
+			}
+		}
+
+		public string Id {
+			get {
+				return "BatchFile";
+			}
+		}
 	}
 }
 

@@ -1,0 +1,65 @@
+/*
+CSS 'divList' selectors.
+Nice clickable lists.
+<div class="divList">
+	<div class="divListItem">
+		<img class="icon"></img>
+		<div class="header">List Item</div>
+		<div class="desc">List Item Description</div>
+	</div>
+</div>
+*/
+
+div.divList {
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	margin: 10px;
+}
+
+@-webkit-keyframes blueWhitePulse {
+	0% { background-color: white; }
+	40% { background-color: lightblue; }
+	60% { background-color: lightblue; }
+	100% { background-color: white; }
+}
+
+@keyframes blueWhitePulse {
+	0% { background-color: white; }
+	50% { background-color: lightblue; }
+	100% { background-color: white; }
+}
+
+div.divListItem {
+	border-bottom: 1px solid gray;
+	padding: 10px;
+	cursor: pointer;
+}
+
+div.divListItem:hover {
+	border-bottom: 1px solid gray;
+	padding: 10px;
+	//background-color: lightgray;
+	animation: blueWhitePulse 1s infinite;
+	-webkit-animation: blueWhitePulse 1s infinite;
+}
+
+div.divListItem div.heading {
+	font-weight: bold;
+	margin-bottom:5px;
+	width: 100%;
+	display: inline;
+	vertical-align: middle;
+}
+
+
+div.divListItem div.desc {
+	font-style: italic;
+	font-size: 80%;
+	margin-bottom:5px;
+}
+
+div.divListItem img.icon {
+	width: 30px;
+	border: 1px solid black;
+}

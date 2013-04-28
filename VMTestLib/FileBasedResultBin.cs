@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Bizarrefish.VMTestLib
 {
@@ -17,9 +18,33 @@ namespace Bizarrefish.VMTestLib
 			}
 		}
 		
-		public void PutResult (string testName, bool success, string detail)
+		public IDictionary<string, string> GetDetails(string name)
 		{
-			using(var fs = File.Create(baseDir + "/results/" + (success ? "SUCCESS-" : "FAIL-") + testName + ".result"))
+			var result = new Dictionary<string, string>();
+			
+			foreach(var fileName in Directory.GetFileSystemEntries(baseDir + "/results"))
+			{
+				string detail = File.ReadAllText(fileName);
+				result[fileName.Replace (".result","")] = detail;
+			}
+			
+			return result;
+		}
+		
+		public IDictionary<string, string> GetArtifactPaths()
+		{
+			var result = new Dictionary<string, string>();
+			
+			foreach(var fileName in Directory.GetFileSystemEntries(baseDir + "/artifacts"))
+			{
+				result[Path.GetFileName(fileName)] = fileName;
+			}
+			return result;
+		}
+		
+		public void PutDetail (string name, string detail)
+		{
+			using(var fs = File.Create(baseDir + "/results/" + name + ".result"))
 			{
 				using(var writer = new StreamWriter(fs))
 				{
