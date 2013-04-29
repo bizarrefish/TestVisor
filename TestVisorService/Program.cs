@@ -98,24 +98,27 @@ namespace Bizarrefish.TestVisorService
 			Console.Write("Test Plan: ");
 			string testPlanId = Console.ReadLine ();
 			
-			tvs.EnqueueTestPlan(machineId, testPlanId, delegate(TaskState state)
+			string resultId = "";
+			
+			resultId = tvs.EnqueueTestPlan(machineId, testPlanId, delegate(TaskState state)
 			{
 				if(state == TaskState.COMPLETE)
 				{
-					Console.WriteLine ("Task Complete!");
+					Console.WriteLine ("Task Complete!\nArtifacts:");
+					var result = tvs.TestResults.Where (tr => tr.Id == resultId).First ();
+					foreach(var artifact in result.Artifacts)
+					{
+						Console.WriteLine ("TestKey: " + artifact.TestKey + ", Name: " + artifact.Name + ", Length: " + artifact.Length);
+					}
 				}
 			});
 		}
 		
 		public static void Main(string[] args)
 		{
-			
-			if(tvs.Tests.Select (t => t.Name).Contains ("BatchTest"))
-				tvs.DeleteTest("BatchTest");
-			
 			while(true)
 			{
-				Console.Write (">");
+				Console.Write ("> ");
 				string cmd = Console.ReadLine ();
 				
 				switch(cmd)

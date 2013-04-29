@@ -42,19 +42,22 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			Repo.Store (data);
 		}
 
-		public TestResult RunTest (string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
+		public TestResult RunTest (string name, string testKey, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
 		{
 			ITestResource res = Repo.GetResource(name);
-			string targetFileName = TestPathPrefix + name + "\\" + name + ".bat";
+			
+			string winDirectory = TestPathPrefix + name + "\\" + testKey + "\\";
+			
+			string targetFileName = winDirectory + name + ".bat";
 			using (Stream s = res.Read())
 			{
 				machine.PutFile(targetFileName, s);
 			}
 			
-			ProgramResult result = machine.RunProgram(targetFileName, "", TestPathPrefix + name + "\\", env);
+			ProgramResult result = machine.RunProgram(targetFileName, "", winDirectory, env);
 			
 			// Hoover up artifacts  *SLUURRRRRP*
-			var artifacts = machine.ListFiles(TestPathPrefix + name + "\\");
+			var artifacts = machine.ListFiles(winDirectory);
 			foreach(var fileName in artifacts)
 			{
 				string tempFile = Path.GetTempFileName();
@@ -62,7 +65,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 				{
 					machine.GetFile (fileName, fs);
 					fs.Seek (0, SeekOrigin.Begin);
-					bin.PutArtifact(fileName, fs);
+					bin.PutArtifact(testKey, fileName, fs);
 				}
 				File.Delete(tempFile);
 			}
@@ -77,7 +80,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			}
 			else
 			{
-				return TestResult.ERRORED;
+				return TestResult.FAILED;
 			}
 		}		
 

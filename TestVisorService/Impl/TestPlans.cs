@@ -96,18 +96,22 @@ namespace Bizarrefish.TestVisorService.Impl
 		IEnumerable<ArtifactInfo> GetArtifactInfos(string resultDir)
 		{
 			FileBasedResultBin resultBin = new FileBasedResultBin(resultDir);
-			foreach(var artifact in resultBin.GetArtifactPaths())
+			foreach(var testKey in resultBin.TestKeys)
 			{
-				ArtifactInfo ai = new ArtifactInfo()
+				foreach(var artifact in resultBin.GetArtifactPaths(testKey))
 				{
-					Id = artifact.Key,
-					Name = artifact.Key,
-					Description = artifact.Key,
-					Length = new FileInfo(artifact.Value).Length,
-					OpenStream = () => File.OpenRead (artifact.Value)
-				};
-				
-				yield return ai;
+					ArtifactInfo ai = new ArtifactInfo()
+					{
+						Id = artifact.Key,
+						Name = artifact.Key,
+						Description = artifact.Key,
+						Length = new FileInfo(artifact.Value).Length,
+						TestKey = testKey,
+						OpenStream = () => File.OpenRead (artifact.Value)
+					};
+					
+					yield return ai;
+				}
 			}
 		}
 		
@@ -121,7 +125,7 @@ namespace Bizarrefish.TestVisorService.Impl
 			throw new NotImplementedException();
 		}
 		
-		public void EnqueueTestPlan (string machineId, string testPlanId, TaskStateListener listener)
+		public string EnqueueTestPlan (string machineId, string testPlanId, TaskStateListener listener)
 		{
 			var machine = machines.GetMachine (machineId);
 			
@@ -134,7 +138,9 @@ namespace Bizarrefish.TestVisorService.Impl
 				}
 			}
 			
-			FileBasedResultBin results = new FileBasedResultBin(ResultsDirectory + "/" + DateTime.UtcNow.Ticks);
+			string resultId = DateTime.UtcNow.Ticks.ToString ();
+			
+			FileBasedResultBin results = new FileBasedResultBin(ResultsDirectory + "/" + resultId);
 			
 			listener(TaskState.PENDING);
 			Thread t = new Thread(delegate()
@@ -156,6 +162,8 @@ namespace Bizarrefish.TestVisorService.Impl
 			});
 			
 			t.Start();
+			
+			return resultId;
 		}
 	}
 }

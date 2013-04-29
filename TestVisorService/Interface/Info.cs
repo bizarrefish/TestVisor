@@ -62,6 +62,7 @@ namespace Bizarrefish.TestVisorService.Interface
 	
 	public class ArtifactInfo : InfoObject
 	{
+		public string TestKey;
 		public long Length;
 		public Func<Stream> OpenStream;
 	}

@@ -31,11 +31,13 @@ namespace Bizarrefish.VMTestLib
 		}
 	}
 	
-	public class CallableTest : Callable
+	delegate bool TestFunc(IDictionary<string, string> vars, string testKey);
+	
+	class CallableTest : Callable
 	{
-		Func<IDictionary<string, string>, bool> func;
+		TestFunc func;
 		
-		public CallableTest(Func<IDictionary<string, string>, bool> func)
+		public CallableTest(TestFunc func)
 		{
 			this.func = func;
 		}
@@ -57,7 +59,13 @@ namespace Bizarrefish.VMTestLib
 				}
 			}
 			
-			return Context.javaToJS(new java.lang.Boolean(func(testParams)), s1);
+			string testKey = "DEFAULT";
+			if(objarr.Length > 1)
+			{
+				testKey = objarr[1].ToString();
+			}
+			
+			return Context.javaToJS(new java.lang.Boolean(func(testParams, testKey)), s1);
 		}
 	}
 	
@@ -69,7 +77,7 @@ namespace Bizarrefish.VMTestLib
 			return Undefined.instance;
 		}
 	}
-
+	
 	public class ObjectReturningFunction : Callable
 	{
 		object val;
@@ -160,7 +168,6 @@ namespace Bizarrefish.VMTestLib
 		Context ctx;
 		ScriptableObject scope;
 		
-		
 		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, ITestResultBin results)
 		{
 			this.ctx = Context.enter ();
@@ -171,9 +178,10 @@ namespace Bizarrefish.VMTestLib
 			this.scope = ctx.initStandardObjects();
 			foreach(var test in tests)
 			{
-				Func<IDictionary<string, string>, bool> runFunc = delegate(IDictionary<string, string> arg) {
+				TestFunc runFunc = delegate(IDictionary<string, string> arg, string testKey) {
 					if(arg == null) arg = new Dictionary<string, string>();
-					return test.Driver.RunTest(test.Name, machine, results, arg) == TestResult.PASSED;
+					var res = test.Driver.RunTest(test.Name, testKey, machine, results, arg);
+					return res == TestResult.PASSED;
 				};
 				
 				scope.defineProperty(test.Name, new CallableTest(runFunc), ScriptableObject.PERMANENT);

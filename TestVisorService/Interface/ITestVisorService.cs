@@ -10,7 +10,13 @@ namespace Bizarrefish.TestVisorService.Interface
 	public partial interface ITestVisorService
 	{
 		
-		void EnqueueTestPlan(string machineId, string testPlanId, TaskStateListener listener);
+		/// <summary>
+		/// Starts a test run
+		/// </summary>
+		/// <returns>
+		/// Test result id
+		/// </returns>
+		string EnqueueTestPlan(string machineId, string testPlanId, TaskStateListener listener);
 	}
 }
 
