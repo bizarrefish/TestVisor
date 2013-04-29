@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLib", "WebLib\WebLib.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLibTest", "WebLibTest\WebLibTest.csproj", "{6F6EE16E-47B4-427A-A9FB-2F82212AA90E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMAgent", "VMAgentCommon\VMAgent.csproj", "{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMAgent", "VMAgent\VMAgent.csproj", "{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVisorService", "TestVIsorService\TestVisorService.csproj", "{F0B25C15-C689-4235-A1F9-0012F22BB7CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVisorService", "TestVisorService\TestVisorService.csproj", "{F0B25C15-C689-4235-A1F9-0012F22BB7CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
