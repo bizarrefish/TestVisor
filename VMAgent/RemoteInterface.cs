@@ -37,6 +37,7 @@ namespace Bizarrefish.VMAgent
 		public void PutFile (Stream s, string destination)
 		{
 			var r = HttpWebRequest.Create (uriPrefix + "PutFile?target=" + HttpUtility.UrlEncode(destination));
+			r.Proxy = new WebProxy();
 			r.Method = "POST";
 			r.ContentType = "application/octet-stream";
 			r.ContentLength = s.Length;
@@ -63,6 +64,7 @@ namespace Bizarrefish.VMAgent
 		public void GetFile (string source, Stream s)
 		{
 			var r = HttpWebRequest.Create(uriPrefix + "GetFile?target=" + HttpUtility.UrlEncode(source));
+			r.Proxy = new WebProxy();
 			r.Method = "GET";
 			r.ContentType = "application/octet-stream";
 			using(var response = r.GetResponse())
@@ -77,6 +79,7 @@ namespace Bizarrefish.VMAgent
 		public string[] GetFileList (string dir)
 		{
 			var r = HttpWebRequest.Create (uriPrefix + "GetFileList?target=" + HttpUtility.UrlEncode(dir));
+			r.Proxy = new WebProxy();
 			r.Method = "GET";
 			using(var response = r.GetResponse())
 			{
@@ -126,6 +129,7 @@ namespace Bizarrefish.VMAgent
 			}
 			
 			var request = HttpWebRequest.Create (reqString);
+			request.Proxy = new WebProxy();
 			request.Method = "GET";
 			using(var response = request.GetResponse())
 			{
@@ -139,6 +143,7 @@ namespace Bizarrefish.VMAgent
 		{
 			string reqString = uriPrefix + "GetProgramResult?" + "id=" + HttpUtility.UrlEncode(programId);
 			var request = HttpWebRequest.Create (reqString);
+			request.Proxy = new WebProxy();
 			request.Method = "GET";
 			using(var response = request.GetResponse())
 			{

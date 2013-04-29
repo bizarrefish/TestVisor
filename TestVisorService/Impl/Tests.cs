@@ -15,7 +15,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTests()
 		{
-			testDriverManager = new TestDriverManager(Directory.GetCurrentDirectory() + "/TestRepos", new[]
+			testDriverManager = new TestDriverManager(baseDirectory + "/TestRepos", new[]
 			{
 				new BatchFileDriver()
 			});

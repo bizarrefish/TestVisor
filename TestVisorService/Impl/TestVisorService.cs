@@ -13,10 +13,13 @@ namespace Bizarrefish.TestVisorService.Impl
 {
 	public partial class TestVisorService : ITestVisorService
 	{
-		public TestVisorService()
+		string baseDirectory;
+		public TestVisorService(string baseDirectory)
 		{
+			this.baseDirectory = baseDirectory;
 			InitMachines();
 			InitTests ();
+			InitTestPlans ();
 		}
 		
 		#region ITestVisorService implementation

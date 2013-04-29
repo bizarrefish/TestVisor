@@ -16,8 +16,8 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTestPlans()
 		{
-			tpr = new TestPlanRepository(Directory.GetCurrentDirectory() + "/TestPlans");
-			ResultsDirectory = Directory.GetCurrentDirectory() + "/TestResults";
+			tpr = new TestPlanRepository(baseDirectory + "/TestPlans");
+			ResultsDirectory = baseDirectory + "/TestResults";
 		}
 		
 		/// <summary>
@@ -136,19 +136,20 @@ namespace Bizarrefish.TestVisorService.Impl
 			
 			FileBasedResultBin results = new FileBasedResultBin(ResultsDirectory + "/" + DateTime.UtcNow.Ticks);
 			
-			JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine, results);
-			
 			listener(TaskState.PENDING);
 			Thread t = new Thread(delegate()
 			{
+				machine.Start("TEST_INIT");
+				JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine, results);
 				listener(TaskState.RUNNING);
 				try
 				{
 					runner.Execute(testPlanCode);
 					listener(TaskState.COMPLETE);
 				}
-				catch(Exception)
+				catch(Exception e)
 				{
+					Console.WriteLine(e.Message);
 					listener(TaskState.FAILED);
 				}
 				

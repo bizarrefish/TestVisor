@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Bizarrefish.VMTestLib
 {
+	/// <summary>
+	/// Filesystem-backed result bin.
+	/// </summary>
 	public class FileBasedResultBin : ITestResultBin
 	{
 		string baseDir;
@@ -31,6 +34,12 @@ namespace Bizarrefish.VMTestLib
 			return result;
 		}
 		
+		/// <summary>
+		/// Gets the artifact paths.
+		/// </summary>
+		/// <returns>
+		/// A mapping from artifact names to paths.
+		/// </returns>
 		public IDictionary<string, string> GetArtifactPaths()
 		{
 			var result = new Dictionary<string, string>();

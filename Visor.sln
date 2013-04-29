@@ -51,6 +51,6 @@ Global
 		{FB525DEC-90E2-4D2F-9834-B6FF9613B165}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = WebLibTest\WebLibTest.csproj
+		StartupItem = TestVisorService\TestVisorService.csproj
 	EndGlobalSection
 EndGlobal

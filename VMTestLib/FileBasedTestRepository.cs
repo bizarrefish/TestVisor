@@ -142,6 +142,9 @@ namespace Bizarrefish.VMTestLib
 
 		public ITestResource CreateResource (string name)
 		{
+			if(index.ContainsKey(name))
+				throw new Exception("Resource " + name + " already exists");
+			
 			string realPath = baseDir + '/' + HttpUtility.UrlEncode(name);
 			File.Create(realPath).Close ();
 			index[name] = new FileBasedTestResource(realPath);

@@ -44,7 +44,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\VMAgentCommon\VMAgent.csproj">
+    <ProjectReference Include="..\VMAgent\VMAgent.csproj">
       <Project>{83195FD2-CE3B-4E9F-B6D7-47FC1FEB849A}</Project>
       <Name>VMAgent</Name>
     </ProjectReference>
