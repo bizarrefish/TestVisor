@@ -190,9 +190,10 @@ namespace Bizarrefish.VMTestLib
 			}
 			
 		}
-		
+
 		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, ITestResultBin results)
 		{
+
 			this.machine = machine;
 			this.ctx = Context.enter ();
 			
@@ -200,8 +201,10 @@ namespace Bizarrefish.VMTestLib
 			                                   d.Tests.Select (t => new { Driver = d, Name = t}));
 			
 			this.scope = ctx.initStandardObjects();
-			foreach(var test in tests)
+			foreach(var thisTest in tests)
 			{
+				var test = thisTest;
+
 				TestFunc runFunc = delegate(IDictionary<string, string> arg, string testKey) {
 					if(arg == null) arg = new Dictionary<string, string>();
 					var res = test.Driver.RunTest(test.Name, testKey, machine, results, arg);
