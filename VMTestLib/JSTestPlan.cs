@@ -149,6 +149,11 @@ namespace Bizarrefish.VMTestLib
 	
 	public class SnapshotFunction : Callable
 	{
+		/// <summary>
+		/// IDs of snapshots taken at the behest of this test plan.
+		/// </summary>
+		public IList<string> Snapshots = new List<string>();
+		
 		IMachine machine;
 		public SnapshotFunction(IMachine m)
 		{
@@ -159,6 +164,8 @@ namespace Bizarrefish.VMTestLib
 		{
 			var snapshotId = machine.MakeSnapshot();
 			
+			Snapshots.Add (snapshotId);
+			
 			return new SnapshotObject(machine, snapshotId);
 		}
 	}
@@ -168,8 +175,25 @@ namespace Bizarrefish.VMTestLib
 		Context ctx;
 		ScriptableObject scope;
 		
+		IMachine machine;
+		
+		IList<string> snapshotIds;
+		
+		public void DeleteSnapshots()
+		{
+			if(snapshotIds != null)
+			{
+				foreach(var ssId in snapshotIds)
+				{
+					machine.DeleteSnapshot(ssId);
+				}
+			}
+			
+		}
+		
 		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, ITestResultBin results)
 		{
+			this.machine = machine;
 			this.ctx = Context.enter ();
 			
 			var tests = testDrivers.SelectMany(d =>
@@ -189,7 +213,11 @@ namespace Bizarrefish.VMTestLib
 			
 			scope.defineProperty("Debug", new DebugFunction(), ScriptableObject.PERMANENT);
 			
-			scope.defineProperty("Snapshot", new SnapshotFunction(machine), ScriptableObject.PERMANENT);
+			SnapshotFunction ssFunc = new SnapshotFunction(machine);
+			
+			snapshotIds = ssFunc.Snapshots;
+			
+			scope.defineProperty("Snapshot", ssFunc, ScriptableObject.PERMANENT);
 
 		}
 		

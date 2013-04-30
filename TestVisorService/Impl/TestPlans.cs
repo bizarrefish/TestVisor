@@ -142,14 +142,19 @@ namespace Bizarrefish.TestVisorService.Impl
 			
 			FileBasedResultBin results = new FileBasedResultBin(ResultsDirectory + "/" + resultId);
 			
+			string initSnapshotId = machine.GetSnapshots().Where (ss => ss.Name == "TEST_INIT").First ().Id;
+			
 			listener(TaskState.PENDING);
 			Thread t = new Thread(delegate()
 			{
-				machine.Start("TEST_INIT");
+				// Open "TEST_INIT" snapshot
+				machine.Start(initSnapshotId);
+				
 				JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine, results);
 				listener(TaskState.RUNNING);
 				try
 				{
+					// Run our javascript
 					runner.Execute(testPlanCode);
 					listener(TaskState.COMPLETE);
 				}
@@ -159,6 +164,14 @@ namespace Bizarrefish.TestVisorService.Impl
 					listener(TaskState.FAILED);
 				}
 				
+				// Revert to initial snapshot
+				machine.Start(initSnapshotId);
+				
+				// Delete accumulated snapshots
+				runner.DeleteSnapshots();
+				
+				// Shutdown VM
+				machine.Shutdown();	
 			});
 			
 			t.Start();
