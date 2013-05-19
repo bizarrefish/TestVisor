@@ -5,12 +5,16 @@ using Bizarrefish.VMLib;
 
 namespace Bizarrefish.VMTestLib
 {	
-	
-	public enum TestResult
+
+	public class TestResult
 	{
-		PASSED,
-		FAILED,
-		ERRORED
+		public long? ExecutionTime = null;
+		public bool? Success = null;
+		public IDictionary<string, object> Properties =
+			new Dictionary<string, object>();
+
+		public string StandardOutput = null;
+		public string StandardError = null;
 	}
 	
 	/// <summary>
@@ -65,7 +69,12 @@ namespace Bizarrefish.VMTestLib
 		/// The available tests.
 		/// </summary>
 		IEnumerable<string> Tests { get; }
-		
+
+		/// <summary>
+		/// Get the parameter names and descriptions available for a particular test
+		/// </summary>
+		IDictionary<string, string> GetTestParamters(string testName);
+
 		/// <summary>
 		/// Run a test on a machine.
 		/// </summary>

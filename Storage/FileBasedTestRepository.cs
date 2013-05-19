@@ -5,8 +5,9 @@ using System.Text;
 using System.Web;
 using System.Linq;
 using System.Web.Script.Serialization;
+using Bizarrefish.VMTestLib;
 
-namespace Bizarrefish.VMTestLib
+namespace Bizarrefish.TestVisorStorage
 {
 	
 	/*public static class Program

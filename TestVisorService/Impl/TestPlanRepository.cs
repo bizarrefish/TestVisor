@@ -4,13 +4,13 @@ using Bizarrefish.TestVisorService.Interface;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using Bizarrefish.TestVisorStorage;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
 	public class TestPlanRepository
 	{	
 		ITestRepository repo;
-		string baseDir;
 		
 		public IEnumerable<TestPlanInfo> TestPlans;
 		
@@ -30,10 +30,10 @@ namespace Bizarrefish.TestVisorService.Impl
 			}
 		}
 		
-		public TestPlanRepository (string baseDir)
+		public TestPlanRepository (string baseDir, string dbKey)
 		{
-			repo = new FileBasedTestRepository(baseDir);
-			this.baseDir = baseDir;
+
+			repo = new RedisTestRepository(TestVisorService.RedisUri, baseDir, dbKey);
 			
 			Refresh();
 		}

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{68FBF3F6-E8DB-4AED-B087-E7C05CFDE570}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Storage</RootNamespace>
+    <RootNamespace>Bizarrefish.TestVisorStorage</RootNamespace>
     <AssemblyName>Storage</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,10 +30,35 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\Libs\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\Libs\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis">
+      <HintPath>..\Libs\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\Libs\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="RedisTestRepository.cs" />
+    <Compile Include="FileBasedResultBin.cs" />
+    <Compile Include="FileBasedTestRepository.cs" />
+    <Compile Include="RedisResultBin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">
+      <Project>{E3A3E527-5F64-442E-BF66-8065149E7402}</Project>
+      <Name>VMTestLib</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

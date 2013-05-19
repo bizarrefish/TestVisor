@@ -13,6 +13,8 @@ namespace Bizarrefish.TestVisorService.Impl
 {
 	public partial class TestVisorService : ITestVisorService
 	{
+		public static Uri RedisUri = new Uri("redis://localhost:6379");
+
 		string baseDirectory;
 		public TestVisorService(string baseDirectory)
 		{
@@ -21,10 +23,6 @@ namespace Bizarrefish.TestVisorService.Impl
 			InitTests ();
 			InitTestPlans ();
 		}
-		
-		#region ITestVisorService implementation
-
-		#endregion
 	}
 }
 

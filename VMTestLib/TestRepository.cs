@@ -33,15 +33,12 @@ namespace Bizarrefish.VMTestLib
 	}
 	
 	/// <summary>
-	/// A per-test place to put artifacts and results.
+	/// A per-testplan place to put artifacts.
 	/// 
 	/// Artifacts are grouped by 'Test Keys'
 	/// </summary>
 	public interface ITestResultBin
 	{
-		IEnumerable<string> TestKeys { get; }
-		
-		void PutDetail(string name, string detail);
 		void PutArtifact(string testKey, string name, Stream stream);
 	}
 }

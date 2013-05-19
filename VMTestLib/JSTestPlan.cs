@@ -31,7 +31,7 @@ namespace Bizarrefish.VMTestLib
 		}
 	}
 	
-	delegate bool TestFunc(IDictionary<string, string> vars, string testKey);
+	delegate object TestFunc(IDictionary<string, string> vars, string testKey);
 	
 	class CallableTest : Callable
 	{
@@ -64,8 +64,7 @@ namespace Bizarrefish.VMTestLib
 			{
 				testKey = objarr[1].ToString();
 			}
-			
-			return Context.javaToJS(new java.lang.Boolean(func(testParams, testKey)), s1);
+			return Context.javaToJS(func(testParams, testKey), s1);
 		}
 	}
 	
@@ -207,8 +206,7 @@ namespace Bizarrefish.VMTestLib
 
 				TestFunc runFunc = delegate(IDictionary<string, string> arg, string testKey) {
 					if(arg == null) arg = new Dictionary<string, string>();
-					var res = test.Driver.RunTest(test.Name, testKey, machine, results, arg);
-					return res == TestResult.PASSED;
+					return test.Driver.RunTest(test.Name, testKey, machine, results, arg);
 				};
 				
 				scope.defineProperty(test.Name, new CallableTest(runFunc), ScriptableObject.PERMANENT);
@@ -231,7 +229,26 @@ namespace Bizarrefish.VMTestLib
 		
 		public object Execute(string javascript)
 		{
-			return ctx.evaluateString(scope, javascript, "script", 0, null);
+
+			Script script = null;
+			// Compile script
+			try
+			{
+				script = ctx.compileString(javascript, "Javascript Test Plan", 1, null);
+			}
+			catch (RhinoException ex)
+			{
+				throw new Exception("Compile error at line " + ex.lineNumber() + ": " + ex.details());
+			}
+
+			try
+			{
+				return script.exec(ctx, scope);
+			}
+			catch(RhinoException err)
+			{
+				throw new Exception("Runtime error: " + err.getMessage());
+			}
 		}
 	}
 }

@@ -6,6 +6,8 @@ using Bizarrefish.VMTestLib;
 using System.IO;
 using Bizarrefish.VMTestLib.TestDrivers.WindowsBatch;
 using System.Linq;
+using Bizarrefish.VMTestLib.TestDrivers;
+using Bizarrefish.VMTestLib.TestDrivers.FileDownloader;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
@@ -15,9 +17,10 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTests()
 		{
-			testDriverManager = new TestDriverManager(baseDirectory + "/TestRepos", new[]
+			testDriverManager = new TestDriverManager(baseDirectory + "/TestRepos", new ITestDriver[]
 			{
-				new BatchFileDriver()
+				//new BatchFileDriver(),
+				new FileDownloader()
 			});
 		}
 		

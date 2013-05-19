@@ -1,8 +1,11 @@
 using System;
 using ServiceStack.Redis;
 using System.IO;
+using Bizarrefish.VMTestLib;
+using System.Web.Script.Serialization;
+using System.Text;
 
-namespace Bizarrefish.VMTestLib
+namespace Bizarrefish.TestVisorStorage
 {
 	internal class RedisTestResource : ITestResource
 	{
@@ -64,10 +67,11 @@ namespace Bizarrefish.VMTestLib
 		// The directory resources are kept in.
 		string resourceDirectory;
 
-		public RedisTestRepository (IRedisClient client, string filePrefix, string dbPrefix)
+		static JavaScriptSerializer jss = new JavaScriptSerializer();
+
+		public RedisTestRepository (Uri dbUri, string filePrefix, string dbPrefix)
 		{
-			this.client = client;
-			this.client = new RedisClient("localhost");
+			this.client = new RedisClient(dbUri);
 			blobKey = dbPrefix + "/Blob";
 			resourceIndexKey = dbPrefix + "/ResourceFileIndex";
 			resourceCounterKey = dbPrefix + "/ResourceCounter";
@@ -105,12 +109,20 @@ namespace Bizarrefish.VMTestLib
 
 		public void Store<TBlob> (TBlob blob)
 		{
-			client.Set(blobKey, blob);
+			client.SetEntry(blobKey, jss.Serialize(blob));
 		}
 
 		public TBlob Load<TBlob> () where TBlob : new ()
 		{
-			return client.Get<TBlob>(blobKey);
+			var blobBytes = client.Get<byte[]>(blobKey);
+			if(blobBytes != null)
+			{
+				return jss.Deserialize<TBlob>(Encoding.UTF8.GetString(blobBytes));
+			}
+			else
+			{
+				return new TBlob();
+			}
 		}
 
 		void WithIndexLock(Action act)

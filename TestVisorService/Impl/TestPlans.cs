@@ -6,6 +6,8 @@ using Bizarrefish.VMTestLib;
 using Bizarrefish.TestVisorService.Interface;
 using System.Threading;
 
+using Bizarrefish.TestVisorStorage;
+
 namespace Bizarrefish.TestVisorService.Impl
 {
 	public partial class TestVisorService : ITestVisorService
@@ -16,7 +18,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTestPlans()
 		{
-			tpr = new TestPlanRepository(baseDirectory + "/TestPlans");
+			tpr = new TestPlanRepository(baseDirectory + "/TestPlans", "TestPlans");
 			ResultsDirectory = baseDirectory + "/TestResults";
 		}
 		
@@ -115,8 +117,6 @@ namespace Bizarrefish.TestVisorService.Impl
 			}
 		}
 		
-		
-		
 		/// <summary>
 		/// Deletes a test result.
 		/// </summary>
@@ -127,6 +127,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		public string EnqueueTestPlan (string machineId, string testPlanId, TaskStateListener listener)
 		{
+			
 			var machine = machines.GetMachine (machineId);
 			
 			string testPlanCode;
@@ -143,7 +144,7 @@ namespace Bizarrefish.TestVisorService.Impl
 			FileBasedResultBin results = new FileBasedResultBin(ResultsDirectory + "/" + resultId);
 			
 			string initSnapshotId = machine.GetSnapshots().Where (ss => ss.Name == "TEST_INIT").First ().Id;
-			
+
 			listener(TaskState.PENDING);
 			Thread t = new Thread(delegate()
 			{

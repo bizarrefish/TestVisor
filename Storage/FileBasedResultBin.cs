@@ -2,8 +2,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using ServiceStack.Text;
+using Bizarrefish.VMTestLib;
 
-namespace Bizarrefish.VMTestLib
+namespace Bizarrefish.TestVisorStorage
 {
 	/// <summary>
 	/// Filesystem-backed result bin.
@@ -61,13 +63,13 @@ namespace Bizarrefish.VMTestLib
 			return result;
 		}
 		
-		public void PutDetail (string name, string detail)
+		public void PutDetail<TDetail>(string testKey, TestDetail type, TDetail detail)
 		{
-			using(var fs = File.Create(baseDir + "/results/" + name + ".result"))
+			using(var fs = File.Create(baseDir + "/results/" + type.ToString () + ".result"))
 			{
 				using(var writer = new StreamWriter(fs))
 				{
-					writer.Write (detail);
+					writer.Write (new JsonSerializer<TDetail>().SerializeToString(detail));
 				}
 			}
 		}

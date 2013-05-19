@@ -6,7 +6,7 @@
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E3A3E527-5F64-442E-BF66-8065149E7402}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Bizarrefish.VMTestLib</RootNamespace>
     <AssemblyName>Bizarrefish.VMTestLib</AssemblyName>
   </PropertyGroup>
@@ -50,9 +50,9 @@
     <Compile Include="Utils.cs" />
     <Compile Include="TestRepository.cs" />
     <Compile Include="TestDrivers\WindowsBatch.cs" />
-    <Compile Include="FileBasedTestRepository.cs" />
-    <Compile Include="FileBasedResultBin.cs" />
     <Compile Include="JSTestPlan.cs" />
+    <Compile Include="TestDetail.cs" />
+    <Compile Include="TestDrivers\FileDownloader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -56,6 +56,10 @@
       <Project>{E3A3E527-5F64-442E-BF66-8065149E7402}</Project>
       <Name>VMTestLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Storage\Storage.csproj">
+      <Project>{68FBF3F6-E8DB-4AED-B087-E7C05CFDE570}</Project>
+      <Name>Storage</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

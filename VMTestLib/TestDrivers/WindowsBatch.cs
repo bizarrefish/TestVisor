@@ -3,16 +3,23 @@ using System;
 using System.Collections.Generic;
 using Bizarrefish.VMLib;
 using System.IO;
+using System.Linq;
 
 namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 {
 	public class BatchFileDriver : ITestDriver
 	{
 		const string TestPathPrefix = "C:\\WindowsBatchFileTests\\";
-		
+
+		class BatchFileTest
+		{
+			public string Name;
+			public IDictionary<string, string> Parameters = new Dictionary<string, string>();
+		}
+
 		class BatchFileDriverData
 		{
-			public IList<string> Tests = new List<string>();
+			public IList<BatchFileTest> Tests = new List<BatchFileTest>();
 		}
 		
 		public ITestRepository Repo { get; set; }
@@ -20,17 +27,42 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			get
 			{
 				var data = Repo.Load<BatchFileDriverData>();
-				return data.Tests;
+				return data.Tests.Select(t => t.Name);
 			}
 		}
 		
 		
 		public void InstallTest (string name, Stream source)
 		{
-			var data = Repo.Load<BatchFileDriverData>();
 			var res = Repo.CreateResource(name);
 			res.Write(source);
-			data.Tests.Add(name);
+
+			BatchFileTest bft = new BatchFileTest();
+
+			using(Stream s = res.Read ())
+			{
+				using(StreamReader rd = new StreamReader(s))
+				{
+					while(!rd.EndOfStream)
+					{
+						string line = rd.ReadLine ();
+						if(!line.StartsWith ("REM TESTPARAM"))
+							break;
+
+						string[] parts = line.Split (' ');
+						string paramName = parts[2];
+						string paramDesc = "";
+						for(int i = 3; i < parts.Length; i++)
+							paramDesc = paramDesc + parts[i] + " ";
+
+						bft.Parameters[paramName] = paramDesc;
+					}
+				}
+			}
+			bft.Name = name;
+
+			var data = Repo.Load<BatchFileDriverData>();
+			data.Tests.Add(bft);
 			Repo.Store (data);
 		}
 		 
@@ -38,7 +70,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 		{
 			Repo.DeleteResource(name);
 			var data = Repo.Load <BatchFileDriverData>();
-			data.Tests.Remove (name);
+			data.Tests.Remove(data.Tests.Where(t => t.Name == name).First ());
 			Repo.Store (data);
 		}
 
@@ -69,19 +101,18 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 				}
 				File.Delete(tempFile);
 			}
-			
-			bin.PutDetail("Standard Output", result.StandardOutput);
-			bin.PutDetail("Standard Error", result.StandardError);
-			
-			// Get RESULTS
-			if(result.ExitCode == 0)
-			{
-				return TestResult.PASSED;
-			}
-			else
-			{
-				return TestResult.FAILED;
-			}
+
+			/*
+			 * bin.PutDetail(testKey, TestDetail.EXIT_CODE, result.ExitCode);
+			bin.PutDetail(testKey, TestDetail.STD_OUTPUT, result.StandardOutput);
+			bin.PutDetail(testKey, TestDetail.STD_ERROR, result.StandardError);
+			bin.PutDetail(testKey, TestDetail.PASSED, result.ExitCode == 0);
+*/
+
+			TestResult tr = new TestResult();
+			tr.Success = result.ExitCode == 0;
+
+			return tr;
 		}		
 
 		public string[] FileExtensions {
@@ -107,6 +138,13 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 				return "BatchFile";
 			}
 		}
+
+		public IDictionary<string, string> GetTestParamters (string testName)
+		{
+			var data = Repo.Load<BatchFileDriverData>();
+			return data.Tests.Where(t => t.Name == testName).First ().Parameters;
+		}
+
 	}
 }
 
