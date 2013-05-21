@@ -12,15 +12,11 @@ and support for multiple hypervisors and test types.
 
 Project Status
 --------------
-Still drawing lines in the sand, some abstractions fairly complete.
-Can manage batch file tests with test harness code to operate everything,
-collecting results into the host's filesystem.
-There's a [Video](http://www.youtube.com/watch?v=g7Hf0I2mp88)
+Getting there...
 
-Some tinkering with the web frontend going on; Just layout and icons, nothing working yet.
-Will probably go for an 100% ajax approach(rendering all done browser side).
-Other frontends may pop up(CLI, for example).
-Mozilla Rhino scripting engine integrated and able to execute test plans.
+We're moving to Redis as a backend and are giving test plans a lot of power.
+Finally ready to focus on phase 2 - the frontend. Still plenty of room for improvement elsewhere,  
+but the important abstractions are mostly done.
 
 
 Concepts:
@@ -35,7 +31,6 @@ Currently supported are:
 Program to run on the guest, providing file upload/download, directory inspection and program control.
 Will provide live screen once the rest of the solution is ready.
 
-<a id="testDrivers"></a>
 ### Test Driver
 Used to manage a number tests of a particular kind.
 A test driver must know how to accept uploaded tests in some format or another,
@@ -48,6 +43,9 @@ In Future:
 - TestComplete
 - You name it
 
+### Test Run
+A sequence of tests, results and artifacts. Normally the result of running a test plan.
+
 ### Test Plan
 A representation of tests to run on the target along with information to control snapshotting.
 Currently using an embedded Mozilla Rhino (via IKVM) to do this. May end up being the best choice.  
@@ -59,6 +57,9 @@ The Components:
 ### TestVisorService
 This 'IS' TestVisor's programmer-facing frontend. 
 Web, Command line or other user-facing frontends talk to this.
+
+### Storage
+TestVisor is backed by Redis. Here's where most of the code to deal with that is.
 
 ### VMAgent
 Executable server which runs the guest, providing a kind of combined FTP/SSH functionality over HTTP.
