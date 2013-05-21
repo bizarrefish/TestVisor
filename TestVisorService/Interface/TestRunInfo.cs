@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Bizarrefish.VMTestLib;
 
 
 namespace Bizarrefish.TestVisorService.Interface
@@ -48,25 +49,23 @@ namespace Bizarrefish.TestVisorService.Interface
 		COMPLETE,
 		FAILED
 	}
-	
+
+	public class TestResultInfo
+	{
+		public TestResult Result;
+		public IEnumerable<Tuple<ArtifactInfo, Func<Stream>>> Artifacts;
+	}
+
 	/// <summary>
 	/// Result of a test plan.
 	/// </summary>
-	public class TestResultInfo : InfoObject
+	public class TestRunInfo : InfoObject
 	{
 		public string TestPlanId;
-		public bool Success;
 		public string Detail;
-		public IEnumerable<ArtifactInfo> Artifacts;
+		public IDictionary<string, TestResultInfo> Results;
 	}
-	
-	public class ArtifactInfo : InfoObject
-	{
-		public string TestKey;
-		public long Length;
-		public Func<Stream> OpenStream;
-	}
-	
+
 	public class HypervisorInfo : InfoObject
 	{ }
 }

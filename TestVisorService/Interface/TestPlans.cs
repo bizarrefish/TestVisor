@@ -42,12 +42,12 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// <summary>
 		/// List of test results. Most recent first.
 		/// </summary>
-		IEnumerable<TestResultInfo> TestResults { get; }
+		IEnumerable<TestRunInfo> TestRuns { get; }
 		
 		/// <summary>
 		/// Deletes a test result.
 		/// </summary>
-		void DeleteResult(string testResultId);
+		void DeleteRun(string testResultId);
 	}
 }
 

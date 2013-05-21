@@ -37,11 +37,6 @@ namespace Bizarrefish.TestVisorStorage
 			return result;
 		}
 		
-		public IEnumerable<string> TestKeys
-		{
-			get { return Directory.GetFileSystemEntries(baseDir + "/artifacts").Select(Path.GetFileName); }
-		}
-		
 		/// <summary>
 		/// Gets the artifact paths.
 		/// </summary>
@@ -85,6 +80,14 @@ namespace Bizarrefish.TestVisorStorage
 				Utils.CopyStream(stream, fs);
 			}
 		}
+
+		#region ITestResultBin implementation
+		public void PutArtifact (ArtifactInfo info, Stream stream)
+		{
+			string artifactDir = baseDir + "/artifacts/" + 
+		}
+		#endregion
+
 	}
 }
 

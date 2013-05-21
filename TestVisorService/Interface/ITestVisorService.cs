@@ -6,6 +6,7 @@ using System.Linq;
 namespace Bizarrefish.TestVisorService.Interface
 {	
 	public delegate void TaskStateListener(TaskState newState);
+	public delegate void TestRunListener(string testRunId, TaskState newState);
 	
 	public partial interface ITestVisorService
 	{
@@ -16,7 +17,7 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// <returns>
 		/// Test result id
 		/// </returns>
-		string EnqueueTestPlan(string machineId, string testPlanId, TaskStateListener listener);
+		string EnqueueTestPlan(string machineId, string testPlanId, TestRunListener listener);
 	}
 }
 

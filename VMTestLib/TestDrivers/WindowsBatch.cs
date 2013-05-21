@@ -97,7 +97,12 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 				{
 					machine.GetFile (fileName, fs);
 					fs.Seek (0, SeekOrigin.Begin);
-					bin.PutArtifact(testKey, fileName, fs);
+					bin.PutArtifact(new ArtifactInfo()
+					{
+						Name = fileName,
+						Description = fileName,
+						FileName = fileName
+					}, fs);
 				}
 				File.Delete(tempFile);
 			}

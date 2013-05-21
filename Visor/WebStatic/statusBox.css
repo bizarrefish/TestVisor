@@ -1,0 +1,24 @@
+/*
+	A little status box
+*/
+
+div.statusBox {
+	border: 1px solid black;
+}
+
+div.statusBox > div.statusObject {
+	margin: 5px;
+	overflow: auto;
+}
+
+div.statusBox > div.statusObject > div.statusDesc {
+	vertical-align: middle;
+	display: inline-block;
+}
+
+div.statusBox > div.statusObject > img.icon {
+	width: 30px;
+	border: 1px solid black;
+	margin: 5px;
+	vertical-align: middle;
+}

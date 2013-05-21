@@ -36,7 +36,6 @@
     <Compile Include="Interface\Machines.cs" />
     <Compile Include="Interface\TestPlans.cs" />
     <Compile Include="Interface\Tests.cs" />
-    <Compile Include="Interface\Info.cs" />
     <Compile Include="Impl\TestVisorService.cs" />
     <Compile Include="Impl\MachineRepository.cs" />
     <Compile Include="Impl\PersistentStore.cs" />
@@ -46,6 +45,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Impl\TestPlanRepository.cs" />
     <Compile Include="Impl\TestPlans.cs" />
+    <Compile Include="Interface\TestRunInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMLib\VMLib.csproj">
@@ -66,6 +66,18 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\Libs\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\Libs\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis">
+      <HintPath>..\Libs\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\Libs\ServiceStack.Text.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\" />

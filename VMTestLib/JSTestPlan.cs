@@ -190,7 +190,7 @@ namespace Bizarrefish.VMTestLib
 			
 		}
 
-		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, ITestResultBin results)
+		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, Func<string, ITestResultBin> binFunc)
 		{
 
 			this.machine = machine;
@@ -206,7 +206,7 @@ namespace Bizarrefish.VMTestLib
 
 				TestFunc runFunc = delegate(IDictionary<string, string> arg, string testKey) {
 					if(arg == null) arg = new Dictionary<string, string>();
-					return test.Driver.RunTest(test.Name, testKey, machine, results, arg);
+					return test.Driver.RunTest(test.Name, testKey, machine, binFunc(testKey), arg);
 				};
 				
 				scope.defineProperty(test.Name, new CallableTest(runFunc), ScriptableObject.PERMANENT);

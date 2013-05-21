@@ -22,15 +22,12 @@ namespace Bizarrefish.TestVisorStorage
 		public object Content { get; set; }
 	}
 
-	public class RedisResultBin : ITestResultBin
+	public class RedisResultBin2 : ITestResultBin
 	{
 		IRedisClient client;
 
 		// List of indexes.
 		string artifactListKey;
-
-		// List of artifacts.
-		string detailListKey;
 
 		// Counter to give our artifact files names
 		string fileNameCounterKey;
@@ -38,25 +35,15 @@ namespace Bizarrefish.TestVisorStorage
 		// Prefix for storing artifact files
 		string filePrefix;
 
-		public RedisResultBin (Uri dbUri, string dbPrefix, string filePrefix)
+		public RedisResultBin2 (Uri dbUri, string dbPrefix, string filePrefix)
 		{
 			this.client = new RedisClient(dbUri);
 			artifactListKey = dbPrefix + "/Artifacts";
-			detailListKey = dbPrefix + "/Detail";
 			fileNameCounterKey = dbPrefix + "/ArtifactCounter";
 			this.filePrefix = filePrefix;
 		}
 
-
-		public IEnumerable<TestDetailObject> GetDetails(string name)
-		{
-			var jss = new JsonSerializer<TestDetailObject>();
-
-			return client.GetAllItemsFromList(detailListKey)
-				.Select(jss.DeserializeFromString);
-		}
-
-		public IEnumerable<ArtifactObject> GetArtifacts(string name)
+		public IEnumerable<ArtifactObject> GetArtifacts()
 		{
 			var jss = new JsonSerializer<ArtifactObject>();
 
@@ -64,20 +51,7 @@ namespace Bizarrefish.TestVisorStorage
 				.Select (jss.DeserializeFromString);
 		}
 
-		public void PutDetail<TDetail>(string testKey, TestDetail type, TDetail detail)
-		{
-			var jss = new JsonSerializer<TestDetailObject>();
-
-			client.AddItemToList(detailListKey, jss.SerializeToString(
-				new TestDetailObject()
-			{
-				TestKey = testKey,
-				DetailType = type,
-				Content = detail
-			}));
-		}
-
-		public void PutArtifact (string testKey, string name, System.IO.Stream stream)
+		public void PutArtifact (ArtifactInfo info, System.IO.Stream stream)
 		{
 			var jss = new JsonSerializer<ArtifactObject>();
 
@@ -85,13 +59,7 @@ namespace Bizarrefish.TestVisorStorage
 
 			string fileName = filePrefix + "/" + ctr + ".artifact";
 
-			client.AddItemToList(artifactListKey, jss.SerializeToString(
-				new ArtifactObject()
-			{
-				TestKey = testKey,
-				ArtifactName = name,
-				FileName = fileName
-			}));
+			client.AddItemToList(artifactListKey, jss.Serialize(info));
 
 			using(var fs = File.Create(fileName))
 			{

@@ -8,6 +8,7 @@ using System.IO;
 
 namespace Bizarrefish.VMTestLib
 {
+	/*
 	public static class Program
 	{
 		public static void Main(string[] args)
@@ -73,7 +74,7 @@ Debug('Awesome! The result was: ' + secondResult);
 			//batchDriver.RunTest(testName, machine, resultBin, new Dictionary<string, string>());
 		}
 	}
-	
+	*/
 	/*public class DummyTest : ITest
 	{
 		public TestResult Result;

@@ -78,6 +78,9 @@ namespace Bizarrefish.TestVisorStorage
 			lockKey = dbPrefix + "/IndexLock";
 			resourceDirectory = filePrefix;
 
+			if(!Directory.Exists(resourceDirectory)) 
+				Directory.CreateDirectory(resourceDirectory);
+
 			CheckIndex();
 		}
 

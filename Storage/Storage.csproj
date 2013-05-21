@@ -50,9 +50,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RedisTestRepository.cs" />
-    <Compile Include="FileBasedResultBin.cs" />
     <Compile Include="FileBasedTestRepository.cs" />
-    <Compile Include="RedisResultBin.cs" />
+    <Compile Include="RedisResultCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

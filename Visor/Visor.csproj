@@ -50,6 +50,11 @@
     <None Include="WebStatic\style.css" />
     <None Include="WebStatic\jquery-1.7.2.min.js" />
     <None Include="WebStatic\divList.css" />
+    <None Include="WebStatic\divList.js" />
+    <None Include="WebStatic\TestRunner.html" />
+    <None Include="WebStatic\module.css" />
+    <None Include="WebStatic\statusBox.css" />
+    <None Include="WebStatic\statusBox.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">

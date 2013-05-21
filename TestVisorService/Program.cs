@@ -97,18 +97,23 @@ namespace Bizarrefish.TestVisorService
 			
 			Console.Write("Test Plan: ");
 			string testPlanId = Console.ReadLine ();
-			
-			string resultId = "";
-			
-			resultId = tvs.EnqueueTestPlan(machineId, testPlanId, delegate(TaskState state)
+
+			tvs.EnqueueTestPlan(machineId, testPlanId, delegate(string runId, TaskState state)
 			{
+				Console.WriteLine(runId + " : " + state.ToString());
 				if(state == TaskState.COMPLETE)
 				{
-					Console.WriteLine ("Task Complete!\nArtifacts:");
-					var result = tvs.TestResults.Where (tr => tr.Id == resultId).First ();
-					foreach(var artifact in result.Artifacts)
+					Console.WriteLine ("Task Complete!");
+					var run = tvs.TestRuns.Where (tr => tr.Id == runId).First ();
+
+					foreach(var result in run.Results)
 					{
-						Console.WriteLine ("TestKey: " + artifact.TestKey + ", Name: " + artifact.Name + ", Length: " + artifact.Length);
+						Console.WriteLine ("\tTestKey: " + result.Key);
+						Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
+						foreach(var artifact in result.Value.Artifacts)
+						{
+							Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+						}
 					}
 				}
 			});

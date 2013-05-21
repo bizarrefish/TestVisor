@@ -9,172 +9,30 @@
 				<h1>TestVisor Dashboard</h1>
 		</div>
 		<hr>
-		<div class="listModule" style="background-color:white">
-		<div class="heading">Tests</div>
-			<div class="desc">Available tests</div>
-			<div class="divList">
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-			</div>
-		</div>
-		<div class="listModule" style="background-color:white">
-		<div class="heading">Tests</div>
-			<div class="desc">Available tests</div>
-			<div class="divList">
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-				<div class="divListItem">
-					<img class="icon" src="visor.png"></img>
-					<div class="heading">BatchTest</div>
-					<div class="desc">Windows Batch File</div>
-				</div>
-			</div>
-		</div>
-		<div class="mainContainer" style="display:none">
-			<div class="machinePanel">
-				<h2>testrunner.bizarrefish.org.uk - Running</h2>
-				<hr>
-				<!--
-				<div class="listModule">
-					<div class="heading">Machines</div>
-					<div class="desc">Available virtual machines</div>
-					<div class="divList">
-						<div class="divListItem">
-							<div class="heading">Machine 1</div>
-						</div>
-						<div class="divListItem">
-							<div class="heading">Machine 2</div>
-						</div>
-					</div>
-				</div>
-				-->
-				<div class="listModule">
-					<div class="heading">Tests</div>
-					<div class="desc">Available tests</div>
-					<div class="divList">
-						<div class="divListItem">
-							<img class="icon" src="visor.png"></img>
-							<div class="heading">32-Bit Installer</div>
-							<div class="desc">Test the 32 bit windows installer</div>
-							<a href="/">Edit..</a>
-							<br/>
-							<a href="/">Delete</a>
-						</div>
-						<div class="divListItem" onclick="AppendTestCode('64-Bit Installer')">
-							<img class="icon" src="visor.png"></img>
-							<div class="heading">64-Bit Installer</div>
-							<div class="desc">Test the 64 bit windows installer</div>
-							<a href="/">Edit..</a>
-							<br/>
-							<a href="/">Delete</a>
-						</div>
-						<div class="divListItem">
-							<img class="icon" src="plus.png"></img>
-							<div class="heading">Add New...</div>
-							<div class="desc">Upload a new test</div>
-						</div>
-					</div>
-				</div>
-				<div class="listModule" id="testPlanModule">
-					<div class="heading">Edit test plan:</div>
-					<textarea id="testPlanArea"></textarea>
-				</div>
-			</div>
 		
-		</div>
+		<div id="testList" class="module" style="width:50%"></div>
+		
 		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="ajax.js"></script>
-		<script type="text/javascript" src="ajax-stubs.js"></script>
 		<script type="text/javascript" src="edit_area/edit_area_full.js"></script>
+		<script type="text/javascript" src="divList.js"></script>
 		<script type="text/javascript">
-			var machineIds = [];
-			
-			function MakeMachineRowId(machineId)
-			{
-				return "machine" + machineId;
-			}
-			
-			function UpdateMachineStatus(machineId)
-			{
-				GetMachineStatus(function(status)
-				{
-					var rowId = MakeMachineRowId(machineId);
-					$("div#" + rowId + " td.status").html(status);
-				}, {machine: machineId});
-			}
-			
-			function MakeMachineButton(machine)
-			{
-				var id = MakeMachineRowId(machine.Id);
-				return "<div class=\"machineListItem\">" +
-						machine.Name
-						"</div>";
-			}
-			
-			function ClearMachines()
-			{
-				$("div.machineList div.machineListItem").remove();
-			}
-			
-			function RefreshMachines()
-			{
-				var machines = GetMachines(function(machines)
-				{
-					ClearMachines();
-					for(var i in machines)
-					{
-						// Add machine to row
-						$("div.machineList").append(MakeMachineButton(machines[i]));
-			
-						var id = machines[i].Id;
-						
-						// Update status
-						UpdateMachineStatus(id);
-					}
-				});
-			}
-			
-			function AppendTestCode(testName)
-			{
-				editAreaLoader.setSelectedText("testPlanArea",
-					"\n// Call test: " + testName + "\ntests[\"" + testName + "\"]();")
-			}
-			
-			$(document).ready(function()
-			{
-				editAreaLoader.init({
-					id : "testPlanArea"		// textarea id
-					,syntax: "js"			// syntax to be uses for highgliting
-					,start_highlight: true	// to display with highlight mode on start-up
-				});
-				RefreshMachines();
-				setInterval(function()
-				{
-			
-					RefreshMachines();
-				}, 5000);
+			$(document).ready(function() {
+				$("div#testList").append(Make_DivList({id: "divlist1"}))
+				
+				var names = [
+					"Lee",
+					"Kerry",
+					"Eddy"
+				];
+				
+				for(var i in names) {
+					
+					(function(name){
+					DivList_Add("div#divlist1", name + "-button", name, "The person: " + name, "visor.png", function() {
+						alert("You clicked " + name);
+					})})(names[i]);
+				}
 			});
 		</script>
 	</body>

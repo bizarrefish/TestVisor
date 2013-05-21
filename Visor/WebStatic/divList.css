@@ -33,10 +33,14 @@ div.divList {
 div.divListItem {
 	border-bottom: 1px solid gray;
 	padding: 10px;
+	
+}
+
+div.divListItem.clickable {
 	cursor: pointer;
 }
 
-div.divListItem:hover {
+div.divListItem.clickable:hover {
 	border-bottom: 1px solid gray;
 	padding: 10px;
 	//background-color: lightgray;
@@ -44,22 +48,28 @@ div.divListItem:hover {
 	-webkit-animation: blueWhitePulse 1s infinite;
 }
 
-div.divListItem div.heading {
+div.divListItem:not(.clickable) {
+	background-color: lightgray;
+}
+
+div.divListItem > div.heading {
 	font-weight: bold;
 	margin-bottom:5px;
 	width: 100%;
 	display: inline;
 	vertical-align: middle;
+	margin-left:7px;
 }
 
 
-div.divListItem div.desc {
+div.divListItem > div.desc {
 	font-style: italic;
 	font-size: 80%;
 	margin-bottom:5px;
+	margin-left:7px;
 }
 
-div.divListItem img.icon {
+div.divListItem > img.icon {
 	width: 30px;
 	border: 1px solid black;
 }

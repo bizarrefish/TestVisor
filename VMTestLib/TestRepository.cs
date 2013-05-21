@@ -31,7 +31,14 @@ namespace Bizarrefish.VMTestLib
 		ITestResource GetResource(string name);
 		void DeleteResource(string name);
 	}
-	
+
+	public class ArtifactInfo
+	{
+		public string Name;
+		public string Description;
+		public string FileName;
+	}
+
 	/// <summary>
 	/// A per-testplan place to put artifacts.
 	/// 
@@ -39,7 +46,7 @@ namespace Bizarrefish.VMTestLib
 	/// </summary>
 	public interface ITestResultBin
 	{
-		void PutArtifact(string testKey, string name, Stream stream);
+		void PutArtifact(ArtifactInfo info, Stream stream);
 	}
 }
 

@@ -1,33 +1,24 @@
 @import "divList.css";
+@import "module.css";
+@import "statusBox.css";
 
 body {
-	background-color:#DDD;
+	background-color:#BBB;
 	width: 100%;
 	margin:0px;
 	padding: 0px;
-/*background-image: linear-gradient(bottom, rgb(156,156,156) 0%, rgb(196,196,196) 64%, rgb(222,222,222) 100%);
-background-image: -o-linear-gradient(bottom, rgb(156,156,156) 0%, rgb(196,196,196) 64%, rgb(222,222,222) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(156,156,156) 0%, rgb(196,196,196) 64%, rgb(222,222,222) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(156,156,156) 0%, rgb(196,196,196) 64%, rgb(222,222,222) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(156,156,156) 0%, rgb(196,196,196) 64%, rgb(222,222,222) 100%);*/
+	font-family: arial,sans-serif;
 }
 
 
 div.header {
-/*
-	background-image: linear-gradient(left , rgb(150,217,235) 0%, rgb(43,35,120) 79%, rgb(18,17,18) 100%);
-background-image: -o-linear-gradient(left , rgb(150,217,235) 0%, rgb(43,35,120) 79%, rgb(18,17,18) 100%);
-background-image: -moz-linear-gradient(left , rgb(150,217,235) 0%, rgb(43,35,120) 79%, rgb(18,17,18) 100%);
-background-image: -webkit-linear-gradient(left , rgb(150,217,235) 0%, rgb(43,35,120) 79%, rgb(18,17,18) 100%);
-background-image: -ms-linear-gradient(left , rgb(150,217,235) 0%, rgb(43,35,120) 79%, rgb(18,17,18) 100%);*/
-width: 100%;
+	width: 100%;
 	height: 10%;
 	margin: 0px;
 	padding-left: 20px;
 	color: black;
-	//border: 1px solid black;
 	float:left;
-	background-color:#DDD;
+	//background-color:#DDD;
 }
 
 div.header div.headerTextContainer {
@@ -90,25 +81,18 @@ div.machineInfo li {
 	margin-bottom: 15px;
 }
 
-div.listModule {
-	margin-left:20px;
-	margin-top:20px;
-	margin-bottom:20px;
-	padding:10px;
-	float: left;
-	border: 1px solid gray;
+div.module#testListModule {
+	width:25%;
 }
 
-
-div.listModule div.heading {
-	margin-left:7px;
-	font-weight: bold;
+div.module#machineModule {
+	width:50%;
+	height:500px;
 }
 
-div.listModule div.desc {
-	margin-left: 7px;
-	font-style: italic;
-	font-size: 80%;
+div.module#machineModule div.statusBox#status {
+	width:50%;
+	float:right;
 }
 
 div#testPlanModule {
