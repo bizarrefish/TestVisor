@@ -104,15 +104,17 @@ namespace Bizarrefish.TestVisorService
 				if(state == TaskState.COMPLETE)
 				{
 					Console.WriteLine ("Task Complete!");
-					var run = tvs.TestRuns.Where (tr => tr.Id == runId).First ();
-
-					foreach(var result in run.Results)
+					foreach(var run in tvs.TestRuns)
 					{
-						Console.WriteLine ("\tTestKey: " + result.Key);
-						Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
-						foreach(var artifact in result.Value.Artifacts)
+						Console.WriteLine ("TestRun: " + run.Id);
+						foreach(var result in run.Results)
 						{
-							Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+							Console.WriteLine ("\tTestKey: " + result.Key);
+							Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
+							foreach(var artifact in result.Value.Artifacts)
+							{
+								Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+							}
 						}
 					}
 				}

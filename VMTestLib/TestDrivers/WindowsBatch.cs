@@ -77,45 +77,45 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 		public TestResult RunTest (string name, string testKey, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
 		{
 			ITestResource res = Repo.GetResource(name);
-			
-			string winDirectory = TestPathPrefix + name + "\\" + testKey + "\\";
-			
-			string targetFileName = winDirectory + name + ".bat";
-			using (Stream s = res.Read())
-			{
-				machine.PutFile(targetFileName, s);
-			}
-			
-			ProgramResult result = machine.RunProgram(targetFileName, "", winDirectory, env);
-			
-			// Hoover up artifacts  *SLUURRRRRP*
-			var artifacts = machine.ListFiles(winDirectory);
-			foreach(var fileName in artifacts)
-			{
-				string tempFile = Path.GetTempFileName();
-				using(FileStream fs = File.Create (tempFile))
-				{
-					machine.GetFile (fileName, fs);
-					fs.Seek (0, SeekOrigin.Begin);
-					bin.PutArtifact(new ArtifactInfo()
-					{
-						Name = fileName,
-						Description = fileName,
-						FileName = fileName
-					}, fs);
-				}
-				File.Delete(tempFile);
-			}
-
-			/*
-			 * bin.PutDetail(testKey, TestDetail.EXIT_CODE, result.ExitCode);
-			bin.PutDetail(testKey, TestDetail.STD_OUTPUT, result.StandardOutput);
-			bin.PutDetail(testKey, TestDetail.STD_ERROR, result.StandardError);
-			bin.PutDetail(testKey, TestDetail.PASSED, result.ExitCode == 0);
-*/
 
 			TestResult tr = new TestResult();
-			tr.Success = result.ExitCode == 0;
+			try
+			{
+				string winDirectory = TestPathPrefix + name + "\\" + testKey + "\\";
+				
+				string targetFileName = winDirectory + name + ".bat";
+				using (Stream s = res.Read())
+				{
+					machine.PutFile(targetFileName, s);
+				}
+				
+				ProgramResult result = machine.RunProgram(targetFileName, "", winDirectory, env);
+				
+				// Hoover up artifacts  *SLUURRRRRP*
+				var artifacts = machine.ListFiles(winDirectory);
+				foreach(var fileName in artifacts)
+				{
+					string tempFile = Path.GetTempFileName();
+					using(FileStream fs = File.Create (tempFile))
+					{
+						machine.GetFile (fileName, fs);
+						fs.Seek (0, SeekOrigin.Begin);
+						bin.PutArtifact(new ArtifactInfo()
+						{
+							Name = fileName,
+							Description = fileName,
+							FileName = fileName
+						}, fs);
+					}
+					File.Delete(tempFile);
+				}
+				tr.Success = result.ExitCode == 0;
+			} catch (Exception e)
+			{
+				tr.Success = false;
+				tr.StandardError = e.Message;
+			}
+
 
 			return tr;
 		}		

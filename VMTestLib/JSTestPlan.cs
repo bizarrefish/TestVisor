@@ -59,7 +59,7 @@ namespace Bizarrefish.VMTestLib
 				}
 			}
 			
-			string testKey = "DEFAULT";
+			string testKey = "default";
 			if(objarr.Length > 1)
 			{
 				testKey = objarr[1].ToString();
@@ -190,7 +190,7 @@ namespace Bizarrefish.VMTestLib
 			
 		}
 
-		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, Func<string, ITestResultBin> binFunc)
+		public JSTestRunner (IEnumerable<ITestDriver> testDrivers, IMachine machine, Func<string, ITestResultBin> binFunc, Action<string, TestResult> resultAction)
 		{
 
 			this.machine = machine;
@@ -206,7 +206,9 @@ namespace Bizarrefish.VMTestLib
 
 				TestFunc runFunc = delegate(IDictionary<string, string> arg, string testKey) {
 					if(arg == null) arg = new Dictionary<string, string>();
-					return test.Driver.RunTest(test.Name, testKey, machine, binFunc(testKey), arg);
+					var testResult = test.Driver.RunTest(test.Name, testKey, machine, binFunc(testKey), arg);
+					resultAction(testKey, testResult);
+					return testResult;
 				};
 				
 				scope.defineProperty(test.Name, new CallableTest(runFunc), ScriptableObject.PERMANENT);

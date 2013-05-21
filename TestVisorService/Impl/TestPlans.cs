@@ -142,7 +142,9 @@ namespace Bizarrefish.TestVisorService.Impl
 				// Open "TEST_INIT" snapshot
 				machine.Start(initSnapshotId);
 				
-				JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine, testKey => results.CreateResultBin(runId, testKey));
+				JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine,
+				                                       testKey => results.CreateResultBin(runId, testKey),
+				                                       (testKey, result) => results.SetResult(runId, testKey, result));
 				listener(runId, TaskState.RUNNING);
 				try
 				{
@@ -152,7 +154,7 @@ namespace Bizarrefish.TestVisorService.Impl
 				}
 				catch(Exception e)
 				{
-					Console.WriteLine(e.Message);
+					throw e;
 					listener(runId, TaskState.FAILED);
 				}
 				

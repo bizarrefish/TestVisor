@@ -64,7 +64,7 @@ namespace Bizarrefish.TestVisorStorage
 				int counter = client.Get<int>(artifactCounterKey);
 
 
-				return client.GetAll<string>(Enumerable.Range(0, counter).Select (i => i.ToString()))
+				return client.GetAll<string>(Enumerable.Range(0, counter).Select (i => MakeArtifactInfoKey(i)))
 					.Values.Select<string, ArtifactInfo>(jss.Deserialize<ArtifactInfo>)
 						.ToArray();
 			}
@@ -110,7 +110,7 @@ namespace Bizarrefish.TestVisorStorage
 		IRedisClient client;
 		string filePrefix;
 
-		const string runId = "/TestRuns";
+		const string runIdSet = "/TestRuns";
 
 		static string MakeTestKeySetKey(string runId)
 		{
@@ -156,7 +156,7 @@ namespace Bizarrefish.TestVisorStorage
 		public ITestResultBin CreateResultBin(string runId, string testKey)
 		{
 			// Add the result id to the set if not already there
-			client.AddItemToSet(runId, runId);
+			client.AddItemToSet(runIdSet, runId);
 
 			// Add the test key
 			client.AddItemToSet(MakeTestKeySetKey(runId), testKey);
@@ -173,7 +173,14 @@ namespace Bizarrefish.TestVisorStorage
 		/// </summary>
 		public IEnumerable<string> GetRuns()
 		{
-			return client.GetAllItemsFromSet(runId);
+			return client.GetAllItemsFromSet(runIdSet);
+		}
+
+		TestResult GetResult(string runId, string testKey)
+		{
+			var result = client.GetValue(MakeResultKey(runId, testKey));
+			if(result == null) return new TestResult();
+			else return jss.Deserialize<TestResult>(result);
 		}
 
 		/// <summary>
@@ -182,8 +189,7 @@ namespace Bizarrefish.TestVisorStorage
 		public IDictionary<string, TestResult> GetResults(string runId)
 		{
 			return client.GetAllItemsFromSet(MakeTestKeySetKey(runId))
-				.ToDictionary(tk => tk, tk =>
-				              jss.Deserialize<TestResult>(client.GetValue(MakeResultKey(runId, tk))));
+				.ToDictionary(tk => tk, tk => GetResult(runId, tk));
 
 		}
 
@@ -208,12 +214,15 @@ namespace Bizarrefish.TestVisorStorage
 			string testKeyListKey = MakeTestKeySetKey(runId);
 			string resultKey = MakeResultKey(runId, testKey);
 
+
+			client.AddItemToSet(runIdSet, runId);
 			client.AddItemToSet(testKeyListKey, testKey);
+
 			client.SetEntry (resultKey, jss.Serialize(result));
 		}
 
 		/// <summary>
-		/// Deletes a run and everything associated.
+		/// Delete a run and everything associated.
 		/// </summary>
 		public void DeleteRun(string runId)
 		{
@@ -227,6 +236,7 @@ namespace Bizarrefish.TestVisorStorage
 				}
 				client.RemoveAll (testKeys.Select(tk => MakeResultKey(runId, tk)));
 				client.Remove (MakeTestKeySetKey(runId));
+				client.RemoveItemFromSet(runIdSet, runId);
    			}
 		}
 
