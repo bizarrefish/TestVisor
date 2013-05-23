@@ -86,16 +86,18 @@ namespace Bizarrefish.TestVisorService.Impl
 		{
 			get
 			{
-				return results.GetRuns().Select(delegate(string runId)
-				{
-					return new TestRunInfo()
-					{
-						Id = runId,
-						Description = "Test Run: " + runId,
-						Results = GetResultInfos(runId)
-					};
-				});
+				return results.GetRuns().Select(runId => GetTestRunInfo(runId));
 			}
+		}
+
+		TestRunInfo GetTestRunInfo(string runId)
+		{
+			return new TestRunInfo()
+			{
+				Id = runId,
+				Description	= "Test Run: " + runId,
+				Results = GetResultInfos(runId)
+			};
 		}
 
 		IDictionary<string, TestResultInfo> GetResultInfos(string runId)
@@ -173,30 +175,38 @@ namespace Bizarrefish.TestVisorService.Impl
 			return runId;
 		}
 
-		public void RunStandaloneTest(string name, IMachine machine, IDictionary<string, string> env, Action<TestResult> resultFunc)
+		public void RunStandaloneTest(string name, string machineId, IDictionary<string, string> env, Action<TestRunInfo> resultFunc)
 		{
 			string runId = "Standalone test run on: " + DateTime.Now;
 
+			var driver = testDriverManager.GetTestDriver(
+					testDriverManager.Tests.Where (t => t.Id == name)
+					.First ().TestTypeId);
 
-			var driver = testDriverManager.GetTestDriver(name);
+			var machine = machines.GetMachine(machineId);
+
+			string initSnapshotId = machine.GetSnapshots().Where (ss => ss.Name == "TEST_INIT").First ().Id;
 
 			new Thread(() =>
 			{
 				try
 				{
-					TestResult res = driver.RunTest(name, "standalone test", machine,results.CreateResultBin(runId, "default"), env);
+					machine.Start(initSnapshotId);
+					TestResult res = driver.RunTest(name, "default", machine,results.CreateResultBin(runId, "default"), env);
 					results.SetResult(runId, "default", res);
 				}
 				catch(Exception e)
 				{
-					resultFunc(new TestResult()
+					results.SetResult(runId, "default", new TestResult()
 					{
 						Success = false,
 						StandardError = e.Message
 					});
 				}
-
+				resultFunc(GetTestRunInfo(runId));
 			}).Start();
+
+
 		}
 
 		public IDictionary<string, string> GetTestParams(string name)

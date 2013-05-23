@@ -3,6 +3,8 @@ using Bizarrefish.TestVisorService.Impl;
 using System.Linq;
 using System.IO;
 using Bizarrefish.TestVisorService.Interface;
+using Bizarrefish.VMTestLib;
+using System.Collections.Generic;
 
 namespace Bizarrefish.TestVisorService
 {
@@ -81,6 +83,56 @@ namespace Bizarrefish.TestVisorService
 			
 		}
 	
+		static void ShowResults()
+		{
+			foreach(var run in tvs.TestRuns)
+			{
+				Console.WriteLine ("TestRun: " + run.Id);
+				foreach(var result in run.Results)
+				{
+					Console.WriteLine ("\tTestKey: " + result.Key);
+					Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
+					foreach(var artifact in result.Value.Artifacts)
+					{
+						Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+					}
+				}
+			}
+		}
+
+
+		static void RunTest()
+		{
+			Console.WriteLine ("Machines:");
+			foreach(var machine in tvs.Machines)
+			{
+				Console.WriteLine(machine.Id + " - " + machine.Name);
+			}
+			
+			Console.Write ("Machine: ");
+			string machineId = Console.ReadLine ();
+
+			ShowTests();
+
+			Console.Write ("Test: ");
+			string testName = Console.ReadLine();
+
+			tvs.RunStandaloneTest(testName, machineId, new Dictionary<string, string>(), delegate(TestRunInfo run)
+			{
+				foreach(var testKey in run.Results.Keys)
+				{
+					var result = run.Results[testKey];
+
+					Console.WriteLine("\tTest Key: " + testKey);
+					Console.WriteLine("\tSuccess: " + result.Result.Success);
+
+					foreach(var artifact in result.Artifacts)
+					{
+						Console.WriteLine ("Artifact: " + artifact.Item1.Name);
+					}
+				}
+			});
+		}
 		
 		static void RunTestPlan()
 		{
@@ -149,7 +201,14 @@ namespace Bizarrefish.TestVisorService
 				case "RunTestPlan":
 					RunTestPlan ();
 					break;
-					
+
+				case "ShowResults":
+					ShowResults();
+					break;
+
+				case "RunTest":
+					RunTest();
+					break;
 					
 				default:
 					Console.WriteLine ("Unrecognised command: " + cmd);

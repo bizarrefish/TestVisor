@@ -29,6 +29,11 @@ namespace Bizarrefish.TestVisorStorage
 			return filePrefix + "/" + artifactNumber;
 		}
 
+		public void ForceUnlock()
+		{
+			client.Remove (lockKey);
+		}
+
 		public RedisResultBin(IRedisClient client, string artifactDbPrefix, string artifactFilePrefix)
 		{
 			this.client = client;
@@ -63,10 +68,18 @@ namespace Bizarrefish.TestVisorStorage
 			{
 				int counter = client.Get<int>(artifactCounterKey);
 
+				var infos = new List<ArtifactInfo>();
 
-				return client.GetAll<string>(Enumerable.Range(0, counter).Select (i => MakeArtifactInfoKey(i)))
-					.Values.Select<string, ArtifactInfo>(jss.Deserialize<ArtifactInfo>)
-						.ToArray();
+				for(int i = 0; i < counter; i++)
+				{
+					string infoString = client.GetValue(MakeArtifactInfoKey(i));
+					if(infoString != null)
+					{
+						infos.Add (jss.Deserialize<ArtifactInfo>(infoString));
+					}
+				}
+
+				return infos.ToArray();
 			}
 		}
 
@@ -144,6 +157,21 @@ namespace Bizarrefish.TestVisorStorage
 
 		static JavaScriptSerializer jss = new JavaScriptSerializer();
 
+		void ForceUnlock()
+		{
+			var runIds = client.GetAllItemsFromSet(runIdSet);
+			foreach(var runId in runIds)
+			{
+				client.Remove (MakeRunLockKey(runId));
+				var testKeys = client.GetAllItemsFromSet(MakeTestKeySetKey(runId));
+
+				foreach(var testKey in testKeys)
+				{
+					MakeResultBin(runId, testKey).ForceUnlock();
+				}
+			}
+		}
+
 		public RedisResultCollection (IRedisClient client, string filePrefix)
 		{
 			this.client = client;
@@ -151,6 +179,8 @@ namespace Bizarrefish.TestVisorStorage
 
 			if(!Directory.Exists(filePrefix))
 				Directory.CreateDirectory(filePrefix);
+
+			ForceUnlock();
 		}
 
 		public ITestResultBin CreateResultBin(string runId, string testKey)

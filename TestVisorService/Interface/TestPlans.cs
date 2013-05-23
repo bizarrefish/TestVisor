@@ -48,6 +48,11 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// Deletes a test result.
 		/// </summary>
 		void DeleteRun(string testResultId);
+
+		/// <summary>
+		/// Run Standalone test
+		/// </summary>
+		void RunStandaloneTest(string name, string machineId, IDictionary<string, string> env, Action<TestRunInfo> resultFunc);
 	}
 }
 
