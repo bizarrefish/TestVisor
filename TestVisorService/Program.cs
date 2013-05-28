@@ -94,7 +94,7 @@ namespace Bizarrefish.TestVisorService
 					Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
 					foreach(var artifact in result.Value.Artifacts)
 					{
-						Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+						Console.WriteLine ("\t\tArtifact: " + artifact.Name);
 					}
 				}
 			}
@@ -128,7 +128,7 @@ namespace Bizarrefish.TestVisorService
 
 					foreach(var artifact in result.Artifacts)
 					{
-						Console.WriteLine ("Artifact: " + artifact.Item1.Name);
+						Console.WriteLine ("Artifact: " + artifact.Name);
 					}
 				}
 			});
@@ -165,7 +165,7 @@ namespace Bizarrefish.TestVisorService
 							Console.WriteLine ("\tSuccess: " + result.Value.Result.Success);
 							foreach(var artifact in result.Value.Artifacts)
 							{
-								Console.WriteLine ("\t\tArtifact: " + artifact.Item1.Name);
+								Console.WriteLine ("\t\tArtifact: " + artifact.Name);
 							}
 						}
 					}

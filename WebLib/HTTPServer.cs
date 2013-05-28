@@ -5,7 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebLibTest
+namespace Bizarrefish.WebLib
 {
 	public class HTTPServer<TSessionData>
 		where TSessionData : new()
@@ -22,7 +22,8 @@ namespace WebLibTest
 			{ "gif", "image/gif" },
 			{ "js", "text/javascript" },
 			{ "html", "text/html" },
-			{ "css", "text/css" }
+			{ "css", "text/css" },
+			{ "ico", "image/ico" }
 		};
 			
 		

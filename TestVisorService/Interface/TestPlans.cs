@@ -37,13 +37,18 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// <summary>
 		/// Gets a stream to write a test plan's contents.
 		/// </summary>
-		Stream WriteTestPlan(string i);
+		Stream WriteTestPlan(string id);
 				
 		/// <summary>
 		/// List of test results. Most recent first.
 		/// </summary>
 		IEnumerable<TestRunInfo> TestRuns { get; }
-		
+
+		/// <summary>
+		/// Read an artifact
+		/// </summary>
+		Stream ReadArtifact(string testRunId, string resultId, int artifactNumber);
+
 		/// <summary>
 		/// Deletes a test result.
 		/// </summary>

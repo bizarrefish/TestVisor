@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Plans</title>
+		<link rel="stylesheet" type="text/css" href="style.css" ></link>
+	</head>
+	<body>
+		<header>
+				<h1><img src="visor.png"></img><span id="headerText">Test plans</span></h1>
+		</header>
+		<hr>
+		
+		<div id="testPlanListModule" class="module">
+			<div class="heading">Tests</div>
+
+			<div id="testPlanList" class="divList"></div>
+			<hr>
+			<div class="desc">Click a test plan to run</div>
+		</div>
+		<div id="testPlanActionModule" class="module">
+			<div class="heading">Actions</div>
+			<hr>
+			<div id="testPlanActionList" class="divList"></div>
+		</div>
+		
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="edit_area/edit_area_full.js"></script>
+		<script type="text/javascript" src="divList.js"></script>
+		<script type="text/javascript" src="statusBox.js"></script>
+		<script type="text/javascript">
+			// The ajax function
+			function ajax(uri, params, callback)
+			{
+				 $.ajax({
+				 	url: uri,
+				 	dataType: "json",
+				 	data: JSON.stringify(params),
+					type: "POST",
+					processData: false,
+					contentType: "application/json"
+				 }).done(function(data, status) {
+				 	if(status === "success") callback(data);
+				 });
+			}
+		</script>
+		<script type="text/javascript" src="/ajax.js"></script>
+		<script type="text/javascript">
+			
+		
+			$(document).ready(function() {
+			
+				var testPlanList = "div#testPlanList";
+				var testPlanActionList = "div#testPlanActionList";
+				
+				
+				
+				GetTestPlans({}, function(testPlans)
+				{
+					for(var i in testPlans) {
+						(function(obj) {
+						
+							DivList_Add(testPlanList,"tp-" + obj.Id, obj.Name, "Test plan: " + obj.Description, "visor.png", function() {
+								
+								RunTestPlan(
+								{
+									TestPlanId: obj.Id
+								}, function() { });
+								
+							});
+							
+						})(testPlans[i]);
+					}
+				});
+				
+			});
+		</script>
+	</body>
+</html>

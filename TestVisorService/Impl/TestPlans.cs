@@ -95,6 +95,7 @@ namespace Bizarrefish.TestVisorService.Impl
 			return new TestRunInfo()
 			{
 				Id = runId,
+				Name = runId,
 				Description	= "Test Run: " + runId,
 				Results = GetResultInfos(runId)
 			};
@@ -109,6 +110,14 @@ namespace Bizarrefish.TestVisorService.Impl
 					retVal.Artifacts = results.GetArtifacts(runId, entry.Key);
 					return retVal;
 				});
+		}
+		
+		/// <summary>
+		/// Read an artifact
+		/// </summary>
+		public Stream ReadArtifact(string testRunId, string resultId, int artifactNumber)
+		{
+			throw new NotImplementedException();
 		}
 
 		
@@ -156,7 +165,6 @@ namespace Bizarrefish.TestVisorService.Impl
 				}
 				catch(Exception e)
 				{
-					throw e;
 					listener(runId, TaskState.FAILED);
 				}
 				

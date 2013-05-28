@@ -33,6 +33,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Visor.cs" />
+    <Compile Include="GetTestPlans.cs" />
+    <Compile Include="GetTestResults.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -55,6 +57,8 @@
     <None Include="WebStatic\module.css" />
     <None Include="WebStatic\statusBox.css" />
     <None Include="WebStatic\statusBox.js" />
+    <None Include="WebStatic\TestPlans.html" />
+    <None Include="WebStatic\TestResults.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">
@@ -68,6 +72,14 @@
     <ProjectReference Include="..\WebLib\WebLib.csproj">
       <Project>{8568E0D3-9140-4183-8D9F-BC274BB05509}</Project>
       <Name>WebLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestVisorService\TestVisorService.csproj">
+      <Project>{F0B25C15-C689-4235-A1F9-0012F22BB7CB}</Project>
+      <Name>TestVisorService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Storage\Storage.csproj">
+      <Project>{68FBF3F6-E8DB-4AED-B087-E7C05CFDE570}</Project>
+      <Name>Storage</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

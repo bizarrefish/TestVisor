@@ -227,13 +227,11 @@ namespace Bizarrefish.TestVisorStorage
 		/// Gets the artifact infos associated with a test key in a run.
 		/// With each artifactinfo is also a function to open a stream to read the artifact.
 		/// </summary>
-		public Tuple<ArtifactInfo,Func<Stream>>[] GetArtifacts(string runId, string testKey)
+		public ArtifactInfo[] GetArtifacts(string runId, string testKey)
 		{
 			var resultBin = MakeResultBin(runId, testKey);
 
-			return resultBin.GetArtifactInfos()
-				.Select ((ai, idx) => Tuple.Create<ArtifactInfo, Func<Stream>>(ai, () => resultBin.ReadArtifact(idx)))
-					.ToArray();
+			return resultBin.GetArtifactInfos();
 		}
 
 		/// <summary>

@@ -34,6 +34,15 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Dynamic" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\Libs\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\Libs\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\Libs\ServiceStack.Text.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -41,6 +50,8 @@
     <Compile Include="Utils.cs" />
     <Compile Include="JSTypes.cs" />
     <Compile Include="AjaxHandler.cs" />
+    <Compile Include="HTTPServer.cs" />
+    <Compile Include="AjaxServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

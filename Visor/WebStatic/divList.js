@@ -106,11 +106,15 @@ function DivList_Add(list, id, title, description, icon, clickHandler)
 	}
 }
 
-function DivList_Remove(id)
+function DivList_Remove(list, id)
 {
 	$(list).children("div.divListItem#" + id).remove();
 }
 
+function DivList_Select(list, id) {
+	$(list).children("div.divListItem").removeClass("selected");
+	$(list).children("div.divListItem#" + id).addClass("selected");
+}
 function DivList_GetElements(list)
 {	
 	

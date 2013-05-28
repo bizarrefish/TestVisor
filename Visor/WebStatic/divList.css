@@ -11,9 +11,6 @@ Nice clickable lists.
 */
 
 div.divList {
-	border-top: 1px solid gray;
-	border-left: 1px solid gray;
-	border-right: 1px solid gray;
 	margin: 10px;
 }
 
@@ -31,7 +28,8 @@ div.divList {
 }
 
 div.divListItem {
-	border-bottom: 1px solid gray;
+	border: 1px solid white;
+	//border-bottom: 1px solid gray;
 	padding: 10px;
 	
 }
@@ -40,10 +38,7 @@ div.divListItem.clickable {
 	cursor: pointer;
 }
 
-div.divListItem.clickable:hover {
-	border-bottom: 1px solid gray;
-	padding: 10px;
-	//background-color: lightgray;
+div.divListItem.clickable:not(.selected):hover {
 	animation: blueWhitePulse 1s infinite;
 	-webkit-animation: blueWhitePulse 1s infinite;
 }
@@ -52,9 +47,14 @@ div.divListItem:not(.clickable) {
 	background-color: lightgray;
 }
 
+div.divListItem.selected {
+	background-color: lightblue;
+	border: 1px solid darkblue;
+}
+
 div.divListItem > div.heading {
 	font-weight: bold;
-	margin-bottom:5px;
+	margin-left:5px;
 	width: 100%;
 	display: inline;
 	vertical-align: middle;

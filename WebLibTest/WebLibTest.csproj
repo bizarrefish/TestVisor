@@ -35,7 +35,6 @@
     <None Include="Test.html" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HTTPServer.cs" />
     <Compile Include="TestApp.cs" />
   </ItemGroup>
   <ItemGroup>

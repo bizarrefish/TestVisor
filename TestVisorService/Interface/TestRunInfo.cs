@@ -53,7 +53,7 @@ namespace Bizarrefish.TestVisorService.Interface
 	public class TestResultInfo
 	{
 		public TestResult Result;
-		public IEnumerable<Tuple<ArtifactInfo, Func<Stream>>> Artifacts;
+		public ArtifactInfo[] Artifacts;
 	}
 
 	/// <summary>
