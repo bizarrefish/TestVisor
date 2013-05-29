@@ -11,26 +11,15 @@ Nice clickable lists.
 */
 
 div.divList {
-	margin: 10px;
-}
-
-@-webkit-keyframes blueWhitePulse {
-	0% { background-color: white; }
-	40% { background-color: lightblue; }
-	60% { background-color: lightblue; }
-	100% { background-color: white; }
-}
-
-@keyframes blueWhitePulse {
-	0% { background-color: white; }
-	50% { background-color: lightblue; }
-	100% { background-color: white; }
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 div.divListItem {
-	border: 1px solid white;
-	//border-bottom: 1px solid gray;
-	padding: 10px;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+	padding: 2px;
+	padding-left: 10px;
 	
 }
 
@@ -39,8 +28,7 @@ div.divListItem.clickable {
 }
 
 div.divListItem.clickable:not(.selected):hover {
-	animation: blueWhitePulse 1s infinite;
-	-webkit-animation: blueWhitePulse 1s infinite;
+	background-color: #DEE;
 }
 
 div.divListItem:not(.clickable) {
@@ -49,12 +37,10 @@ div.divListItem:not(.clickable) {
 
 div.divListItem.selected {
 	background-color: lightblue;
-	border: 1px solid darkblue;
 }
 
 div.divListItem > div.heading {
 	font-weight: bold;
-	margin-left:5px;
 	width: 100%;
 	display: inline;
 	vertical-align: middle;

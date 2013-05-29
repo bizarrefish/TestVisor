@@ -72,7 +72,7 @@ namespace Bizarrefish.TestVisorStorage
 
 				for(int i = 0; i < counter; i++)
 				{
-					string infoString = client.GetValue(MakeArtifactInfoKey(i));
+					string infoString = client.GetValue(MakeArtifactInfoKey(i+1));
 					if(infoString != null)
 					{
 						infos.Add (jss.Deserialize<ArtifactInfo>(infoString));
@@ -112,6 +112,13 @@ namespace Bizarrefish.TestVisorStorage
 		}
 	}
 
+	public class TestRun : IInfo
+	{
+		public string Id { get; set; }
+		public string Name { get; set; }
+		public DateTime When { get; set; }
+	}
+
 	/// <summary>
 	/// Manages test results with a redis database.
 	/// 
@@ -123,7 +130,9 @@ namespace Bizarrefish.TestVisorStorage
 		IRedisClient client;
 		string filePrefix;
 
-		const string runIdSet = "/TestRuns";
+		const string runIdListKey = "/TestRuns";
+
+		RedisInfoCollection<TestRun> testRunInfos;
 
 		static string MakeTestKeySetKey(string runId)
 		{
@@ -150,6 +159,11 @@ namespace Bizarrefish.TestVisorStorage
 			return "/TestRun:" + runId + "/TestKey:" + testKey + "/TestResult";
 		}
 
+		string MakeRunCounterKey()
+		{
+			return "/TestRunCounter";
+		}
+
 	 	RedisResultBin MakeResultBin(string runId, string testKey)
 		{
 			return new RedisResultBin(client, MakeResultBinKey(runId, testKey), MakeResultBinPath(runId, testKey));
@@ -159,7 +173,7 @@ namespace Bizarrefish.TestVisorStorage
 
 		void ForceUnlock()
 		{
-			var runIds = client.GetAllItemsFromSet(runIdSet);
+			var runIds = client.GetAllItemsFromList(runIdListKey);
 			foreach(var runId in runIds)
 			{
 				client.Remove (MakeRunLockKey(runId));
@@ -176,6 +190,7 @@ namespace Bizarrefish.TestVisorStorage
 		{
 			this.client = client;
 			this.filePrefix = filePrefix;
+			this.testRunInfos = new RedisInfoCollection<TestRun>(client, () => new TestRun());
 
 			if(!Directory.Exists(filePrefix))
 				Directory.CreateDirectory(filePrefix);
@@ -183,11 +198,23 @@ namespace Bizarrefish.TestVisorStorage
 			ForceUnlock();
 		}
 
+		public string CreateRun(string runName)
+		{
+			string id = client.IncrementValue (MakeRunCounterKey()).ToString ();
+
+			client.PushItemToList(runIdListKey, id);
+			testRunInfos.Store(new TestRun()
+			{
+				Id = id,
+				Name = runName,
+				When = DateTime.Now
+			});
+
+			return id;
+		}
+
 		public ITestResultBin CreateResultBin(string runId, string testKey)
 		{
-			// Add the result id to the set if not already there
-			client.AddItemToSet(runIdSet, runId);
-
 			// Add the test key
 			client.AddItemToSet(MakeTestKeySetKey(runId), testKey);
 
@@ -199,11 +226,12 @@ namespace Bizarrefish.TestVisorStorage
 		}
 
 		/// <summary>
-		/// Get the ids of all test runs.
+		/// Get test run information
 		/// </summary>
-		public IEnumerable<string> GetRuns()
+		public IEnumerable<TestRun> GetRuns(int start, int max)
 		{
-			return client.GetAllItemsFromSet(runIdSet);
+			return client.GetRangeFromList(runIdListKey, start, start + max)
+				.Select (testRunInfos.Load);
 		}
 
 		TestResult GetResult(string runId, string testKey)
@@ -220,7 +248,6 @@ namespace Bizarrefish.TestVisorStorage
 		{
 			return client.GetAllItemsFromSet(MakeTestKeySetKey(runId))
 				.ToDictionary(tk => tk, tk => GetResult(runId, tk));
-
 		}
 
 		/// <summary>
@@ -243,7 +270,7 @@ namespace Bizarrefish.TestVisorStorage
 			string resultKey = MakeResultKey(runId, testKey);
 
 
-			client.AddItemToSet(runIdSet, runId);
+			client.AddItemToSet(runIdListKey, runId);
 			client.AddItemToSet(testKeyListKey, testKey);
 
 			client.SetEntry (resultKey, jss.Serialize(result));
@@ -264,7 +291,7 @@ namespace Bizarrefish.TestVisorStorage
 				}
 				client.RemoveAll (testKeys.Select(tk => MakeResultKey(runId, tk)));
 				client.Remove (MakeTestKeySetKey(runId));
-				client.RemoveItemFromSet(runIdSet, runId);
+				client.RemoveItemFromSet(runIdListKey, runId);
    			}
 		}
 

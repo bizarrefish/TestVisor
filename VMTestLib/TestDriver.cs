@@ -8,6 +8,8 @@ namespace Bizarrefish.VMTestLib
 
 	public class TestResult
 	{
+		public string TestKey;
+
 		public long? ExecutionTime = null;
 		public bool? Success = null;
 		public IDictionary<string, object> Properties =

@@ -42,7 +42,7 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// <summary>
 		/// List of test results. Most recent first.
 		/// </summary>
-		IEnumerable<TestRunInfo> TestRuns { get; }
+		IEnumerable<TestRunInfo> GetTestRuns(int start, int max);
 
 		/// <summary>
 		/// Read an artifact

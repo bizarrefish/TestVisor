@@ -1,9 +1,10 @@
 @import "divList.css";
 @import "module.css";
 @import "statusBox.css";
+@import "navBar.css";
 
 body {
-	background-color:#ABE;
+	background-color: rgb(88, 131, 129);
 	width: 100%;
 	margin:0px;
 	padding: 0px;
@@ -15,6 +16,7 @@ body {
 
 header {
 	margin:0px;
+	background-color:white;
 }
 
 header > h1 {

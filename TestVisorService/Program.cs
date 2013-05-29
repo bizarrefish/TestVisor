@@ -85,7 +85,7 @@ namespace Bizarrefish.TestVisorService
 	
 		static void ShowResults()
 		{
-			foreach(var run in tvs.TestRuns)
+			foreach(var run in tvs.GetTestRuns(0, 200000))
 			{
 				Console.WriteLine ("TestRun: " + run.Id);
 				foreach(var result in run.Results)
@@ -156,7 +156,7 @@ namespace Bizarrefish.TestVisorService
 				if(state == TaskState.COMPLETE)
 				{
 					Console.WriteLine ("Task Complete!");
-					foreach(var run in tvs.TestRuns)
+					foreach(var run in tvs.GetTestRuns(0, 200000))
 					{
 						Console.WriteLine ("TestRun: " + run.Id);
 						foreach(var result in run.Results)

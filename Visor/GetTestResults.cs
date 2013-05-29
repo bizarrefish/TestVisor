@@ -18,10 +18,8 @@ namespace Visor
 	{
 		static TestRunInfo[] GetTestResults(GetTestResultsRequest req, VisorSessionData session)
 		{
-			return tvs.TestRuns
-				.Where(tr => tr.TestPlanId == req.TestPlanId || true)
-				.Skip(req.Skip)
-					.Take (req.Limit).ToArray ();
+			return tvs.GetTestRuns(req.Skip, req.Limit)
+				.Where(tr => tr.TestPlanId == req.TestPlanId || true).ToArray ();
 		}
 
 	}

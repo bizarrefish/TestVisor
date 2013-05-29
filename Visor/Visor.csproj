@@ -59,6 +59,8 @@
     <None Include="WebStatic\statusBox.js" />
     <None Include="WebStatic\TestPlans.html" />
     <None Include="WebStatic\TestResults.html" />
+    <None Include="WebStatic\navBar.css" />
+    <None Include="WebStatic\navBar.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">

@@ -78,28 +78,23 @@ namespace Bizarrefish.TestVisorService.Impl
 		{
 			return tpr.WriteTestPlan(id);
 		}
-				
-		/// <summary>
-		/// List of test results. Most recent first.
-		/// </summary>
-		public IEnumerable<TestRunInfo> TestRuns
+
+		public IEnumerable<TestRunInfo> GetTestRuns(int start, int max)
 		{
-			get
+			IEnumerable<TestRun> runs = results.GetRuns(start, max);
+
+			foreach(var run in runs)
 			{
-				return results.GetRuns().Select(runId => GetTestRunInfo(runId));
+				var tri = new TestRunInfo();
+				tri.Id = run.Id;
+				tri.Name = run.Name;
+				tri.When = run.When;
+				tri.Description = "Test run on " + run.When;
+				tri.Results = GetResultInfos(run.Id);
+				yield return tri;
 			}
 		}
 
-		TestRunInfo GetTestRunInfo(string runId)
-		{
-			return new TestRunInfo()
-			{
-				Id = runId,
-				Name = runId,
-				Description	= "Test Run: " + runId,
-				Results = GetResultInfos(runId)
-			};
-		}
 
 		IDictionary<string, TestResultInfo> GetResultInfos(string runId)
 		{
@@ -142,10 +137,10 @@ namespace Bizarrefish.TestVisorService.Impl
 					testPlanCode = reader.ReadToEnd();
 				}
 			}
-			
-			string runId = "Test run on: " + DateTime.Now;
 
 			string initSnapshotId = machine.GetSnapshots().Where (ss => ss.Name == "TEST_INIT").First ().Id;
+
+			string runId = results.CreateRun("Run at " + DateTime.Now.TimeOfDay);
 
 			listener(runId, TaskState.PENDING);
 			Thread t = new Thread(delegate()
@@ -211,7 +206,7 @@ namespace Bizarrefish.TestVisorService.Impl
 						StandardError = e.Message
 					});
 				}
-				resultFunc(GetTestRunInfo(runId));
+				//resultFunc(GetTestRunInfo(runId));
 			}).Start();
 
 
