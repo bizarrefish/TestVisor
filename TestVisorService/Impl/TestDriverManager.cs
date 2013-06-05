@@ -3,6 +3,7 @@ using Bizarrefish.VMTestLib;
 using System.Collections.Generic;
 using Bizarrefish.TestVisorService.Interface;
 using Bizarrefish.TestVisorStorage;
+using ServiceStack.Redis;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
@@ -42,14 +43,14 @@ namespace Bizarrefish.TestVisorService.Impl
 			return driverDict[id];
 		}
 		
-		public TestDriverManager (string baseDirectory, IEnumerable<ITestDriver> testDrivers)
+		public TestDriverManager (RedisClient client, string baseDirectory, IEnumerable<ITestDriver> testDrivers)
 		{
 			var testTypes = new List<TestType>();
 			this.TestTypes = testTypes;
 			
 			foreach(var driver in testDrivers)
 			{
-				driver.Repo = new RedisTestRepository(TestVisorService.RedisUri, baseDirectory, driver.Id);
+				driver.Repo = new RedisTestRepository(client, baseDirectory, driver.Id);
 				driverDict[driver.Id] = driver;
 				
 				testTypes.Add (new TestType()

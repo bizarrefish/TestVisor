@@ -9,6 +9,7 @@ using System.Linq;
 using Bizarrefish.VMTestLib.TestDrivers;
 using Bizarrefish.VMTestLib.TestDrivers.FileDownloader;
 using Bizarrefish.TestVisorStorage;
+using ServiceStack.Redis;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
@@ -18,7 +19,9 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTests()
 		{
-			testDriverManager = new TestDriverManager(baseDirectory + "/TestRepos", new ITestDriver[]
+			var client = new RedisClient(TestVisorService.RedisUri);
+
+			testDriverManager = new TestDriverManager(client, baseDirectory + "/TestRepos", new ITestDriver[]
 			{
 				new BatchFileDriver(),
 				new FileDownloader()

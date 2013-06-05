@@ -7,7 +7,7 @@ using Bizarrefish.TestVisorStorage;
 
 namespace Bizarrefish.TestVisorService.Interface
 {
-	public class InfoObject
+	public class InfoObject : IInfo
 	{
 		public string Id { get; set; }
 		public string Name { get; set; }

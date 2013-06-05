@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Bizarrefish.TestVisorStorage;
+using ServiceStack.Redis;
+using System.Linq;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
@@ -12,36 +14,35 @@ namespace Bizarrefish.TestVisorService.Impl
 	{	
 		ITestRepository repo;
 		
-		public IEnumerable<TestPlanInfo> TestPlans;
-		
-		public void Refresh()
+		public IEnumerable<TestPlanInfo> TestPlans
 		{
-			var testPlans = new List<TestPlanInfo>();
-			this.TestPlans = testPlans;
-			
-			foreach(var resource in repo.Resources)
+			get
 			{
-				testPlans.Add (new TestPlanInfo()
-				{
-					Id = resource,
-					Description = resource,
-					Name = resource
-				});
+				return repo.Resources.Select (re => planInfos.Load(re));
 			}
 		}
-		
-		public TestPlanRepository (string baseDir, string dbKey)
-		{
 
-			repo = new RedisTestRepository(TestVisorService.RedisUri, baseDir, dbKey);
-			
-			Refresh();
+		public RedisInfoCollection<TestPlanInfo> planInfos;
+		
+		public TestPlanRepository (RedisClient client, string baseDir, string dbKey)
+		{
+			repo = new RedisTestRepository(client, baseDir, dbKey);
+			planInfos = new RedisInfoCollection<TestPlanInfo>(client, () => new TestPlanInfo());
 		}
 		
 		public void CreateTestPlan(string name)
 		{
 			repo.CreateResource(name);
-			Refresh();
+		}
+
+		public void SetInfo(TestPlanInfo info)
+		{
+			planInfos.Store(info);
+		}
+
+		public TestPlanInfo GetInfo(string id)
+		{
+			return planInfos.Load(id);
 		}
 		
 		public Stream WriteTestPlan(string name)
@@ -57,7 +58,6 @@ namespace Bizarrefish.TestVisorService.Impl
 		public void DeleteTestPlan(string name)
 		{
 			repo.DeleteResource(name);
-			Refresh ();
 		}
 	}
 }

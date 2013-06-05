@@ -69,9 +69,9 @@ namespace Bizarrefish.TestVisorStorage
 
 		static JavaScriptSerializer jss = new JavaScriptSerializer();
 
-		public RedisTestRepository (Uri dbUri, string filePrefix, string dbPrefix)
+		public RedisTestRepository (RedisClient client, string filePrefix, string dbPrefix)
 		{
-			this.client = new RedisClient(dbUri);
+			this.client = client;
 			blobKey = dbPrefix + "/Blob";
 			resourceIndexKey = dbPrefix + "/ResourceFileIndex";
 			resourceCounterKey = dbPrefix + "/ResourceCounter";

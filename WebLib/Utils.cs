@@ -54,8 +54,7 @@ namespace Bizarrefish.WebLib
 		
 		public static object MakeJavascript(JSFunction jsf)
 		{
-			var fields = jsf.RequestType.GetFields();
-			string fieldsArray = Serializer.Serialize(fields.Select ((f) => f.Name));
+			string fieldsArray = Serializer.Serialize(jsf.RequestType.GetFields().Select ((f) => f.Name));
 			return "var " + jsf.Name + " = GenRPC('" + jsf.Name + "', " + fieldsArray + ");";
 		}
 	}

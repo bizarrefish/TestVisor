@@ -24,7 +24,9 @@ namespace Bizarrefish.WebLib
 		void AddEndpoint<TRequest, TResponse>(string endpointName, AjaxFunction<TRequest, TSession, TResponse> func)
 			where TRequest : class
 			where TResponse : class;
-		
+
+		void AddClass<TClass>();
+
 		/// <summary>
 		/// Generates a javascript library with method stubs for all added modules.
 		/// </summary>
@@ -36,14 +38,14 @@ namespace Bizarrefish.WebLib
 		/// </summary>
 		string Handle(string url, TSession session, string req); 
 	}
-	
+
 	class JSFunction
 	{
 		public Type RequestType;
 		public Type ResponseType;
 		public Func<object, object, object> Function;
 		public string Name;
-		
+
 		public static JSFunction Create<TRequest, TSession, TResponse>(string name, Func<TRequest, TSession, TResponse> func)
 			where TRequest : class
 			where TResponse : class
@@ -61,7 +63,13 @@ namespace Bizarrefish.WebLib
 			};
 		}
 	}
-	
+
+
+	public interface IAjaxMethod<TSession, TResponse>
+	{
+		TResponse Call(TSession session);
+	}
+
 	public class AjaxHandler<TSession> : IAjaxHandler<TSession>
 	{
 		IDictionary<string, TaskRunner<object>> tasks = new Dictionary<string, TaskRunner<object>>();
@@ -69,6 +77,7 @@ namespace Bizarrefish.WebLib
 		IDictionary<string, JSFunction> funcs = new Dictionary<string, JSFunction>();
 		
 		long keyCounter = 0;
+
 		
 		public void AddEndpoint<TRequest, TResponse> (string endpointName, AjaxFunction<TRequest, TSession, TResponse> func)
 			where TRequest : class
@@ -76,6 +85,36 @@ namespace Bizarrefish.WebLib
 		{
 			// Wrap in serialization stuff...
 			funcs["/" + endpointName] = JSFunction.Create<TRequest, TSession, TResponse>(endpointName, (r, s) => func(r, s));
+		}
+
+		public void AddClass<TClass>()
+		{
+			Type t = typeof(TClass);
+			var nested = t.GetNestedTypes();
+
+			foreach(var type in nested)
+			{
+				var requestType = type;
+
+				Type iFaceType = type.GetInterfaces().FirstOrDefault();
+				if(iFaceType.GetGenericTypeDefinition() == typeof(IAjaxMethod<,>))
+				{
+					string methodName = t.Name + "_" + type.Name;
+					Type respType = iFaceType.GetGenericArguments()[0];
+					JSFunction jsf = new JSFunction();
+					jsf.Name = methodName;
+					jsf.RequestType = type;
+					jsf.ResponseType = respType;
+					jsf.Function = delegate(object req, object session)
+					{
+						object[] pars = new[] { session };
+						return requestType.GetMethod ("Call").Invoke(req, pars);
+					};
+
+					funcs["/" + methodName] = jsf;
+				}
+			}
+
 		}
 
 		public string GetJavascript ()
@@ -117,7 +156,8 @@ namespace Bizarrefish.WebLib
 					Type rType = typeof(JSONRequest<>).MakeGenericType(new[] { jsf.RequestType });
 					
 					object jreq = Utils.DeserializeToType(req, rType);
-					
+					if(jreq == null) jreq = Activator.CreateInstance(rType);
+
 					string reqKey = JSONRequest<object>.GetKey(jreq);
 					object argsObj = JSONRequest<object>.GetArgs(jreq);
 					

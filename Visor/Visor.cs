@@ -13,9 +13,10 @@ using Bizarrefish.VMTestLib;
 
 namespace Visor
 {
-	class VisorSessionData
+	public class VisorSessionData
 	{
 	}
+
 
 	public partial class Visor
 	{
@@ -25,14 +26,6 @@ namespace Visor
 
 		static Bizarrefish.WebLib.HTTPServer<VisorSessionData> server;
 
-		static void AddFunc<TRequest, TResponse>(string endpointName, AjaxFunction<TRequest,VisorSessionData, TResponse> func)
-			where TRequest : class
-			where TResponse : class
-		{
-			ajaxHandler.AddEndpoint<TRequest, TResponse>(endpointName, func);
-			server.AddFunc(endpointName);
-		}
-
 		public static void Main(string[] args)
 		{
 			server = new Bizarrefish.WebLib.HTTPServer<VisorSessionData>(8080);
@@ -41,14 +34,13 @@ namespace Visor
 
 			tvs = new TestVisorService(Directory.GetCurrentDirectory());
 
-			// Web functions:
+			Results.tvs = tvs;
+			Plans.tvs = tvs;
+			ajaxHandler.AddClass<Results>();
+			ajaxHandler.AddClass<Plans>();
 
-			AddFunc<GetTestPlansRequest, IEnumerable<TestPlanInfo>>("GetTestPlans", GetTestPlans);
-			AddFunc<RunTestPlanRequest, TestResult>("RunTestPlan", RunTestPlan);
-			AddFunc<GetTestResultsRequest, IEnumerable<TestRunInfo>>("GetTestResults", GetTestResults);
-			
 			File.Delete("../../ajax.js");
-			File.WriteAllText("../../ajax.js", ajaxHandler.GetJavascript());
+			File.WriteAllText("../../WebStatic/ajax.js", ajaxHandler.GetJavascript());
 
 			server.Start (ajaxHandler.Handle);
 

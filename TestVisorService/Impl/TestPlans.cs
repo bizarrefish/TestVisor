@@ -22,9 +22,11 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		void InitTestPlans()
 		{
-			tpr = new TestPlanRepository(baseDirectory + "/TestPlans", "TestPlans");
+			var client = new RedisClient(TestVisorService.RedisUri);
+
+			tpr = new TestPlanRepository(client, baseDirectory + "/TestPlans", "TestPlans");
 			ResultsDirectory = baseDirectory + "/TestResults";
-			results = new RedisResultCollection(new RedisClient(TestVisorService.RedisUri), ResultsDirectory);
+			results = new RedisResultCollection(client, ResultsDirectory);
 		}
 		
 		/// <summary>
@@ -112,7 +114,8 @@ namespace Bizarrefish.TestVisorService.Impl
 		/// </summary>
 		public Stream ReadArtifact(string testRunId, string resultId, int artifactNumber)
 		{
-			throw new NotImplementedException();
+			var fName = results.GetArtifacts(testRunId, resultId)[artifactNumber].FileName;
+			return File.OpenRead(fName);
 		}
 
 		

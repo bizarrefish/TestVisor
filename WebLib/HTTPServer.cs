@@ -13,9 +13,7 @@ namespace Bizarrefish.WebLib
 		//IDictionary<string, DateTime> sessionsTime = new Dictionary<string, DateTime>();
 		
 		IDictionary<long, TSessionData> sessions = new Dictionary<long, TSessionData>();
-		
-		ISet<string> funcs = new HashSet<string>();
-		
+
 		IDictionary<string, string> contentTypes = new Dictionary<string, string>()
 		{
 			{ "png", "image/png" },
@@ -37,11 +35,6 @@ namespace Bizarrefish.WebLib
 		{
 			listener = new HttpListener();
 			listener.Prefixes.Add ("http://*:" + port + "/");
-		}
-		
-		public void AddFunc(string func)
-		{
-			funcs.Add("/" + func);
 		}
 		
 		
@@ -71,11 +64,9 @@ namespace Bizarrefish.WebLib
 			else
 			{
 				session = new TSessionData();
-				//session.SessionId = id.ToString();
 				sessions[id] = session;
 			}
-			
-			//sessionsTime[now] = session;
+
 			
 			resp.SetCookie(c);
 			
@@ -91,7 +82,7 @@ namespace Bizarrefish.WebLib
 				
 				try 
 				{
-					if(funcs.Contains(context.Request.Url.LocalPath))
+					if(!context.Request.Url.LocalPath.StartsWith ("/Static"))
 					{
 						context.Response.StatusCode = 200;
 						context.Response.ContentType = "application/json";
@@ -109,11 +100,12 @@ namespace Bizarrefish.WebLib
 					}
 					else
 					{
-						var pathParts = context.Request.Url.LocalPath.Split ('.');
+						var path = context.Request.Url.LocalPath.Replace("/Static", "/");
+						var pathParts = path.Split ('.');
 						context.Response.StatusCode = 200;
 						context.Response.ContentType = contentTypes[pathParts[pathParts.Length-1]];
 						
-						string fileName = "../../" + context.Request.Url.LocalPath.Replace ("..", "");
+						string fileName = "../../WebStatic" + path.Replace ("..", "");
 						
 						if(File.Exists (fileName)) 
 						{

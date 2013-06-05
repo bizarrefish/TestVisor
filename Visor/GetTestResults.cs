@@ -4,24 +4,40 @@ using Bizarrefish.TestVisorService.Interface;
 using System.Collections.Generic;
 using Bizarrefish.VMTestLib;
 using System.Linq;
+using System.Threading;
 
 namespace Visor
 {
-	public class GetTestResultsRequest
+
+	public class Plans
 	{
-		public string TestPlanId;
-		public int Skip;
-		public int Limit;
+		public static ITestVisorService tvs;
+		public class GetTestPlans : IAjaxMethod<VisorSessionData, TestPlanInfo[]>
+		{
+			public TestPlanInfo[] Call (VisorSessionData session)
+			{
+				return tvs.TestPlans.ToArray();
+			}
+		}
 	}
 
-	public partial class Visor
+	public class Results
 	{
-		static TestRunInfo[] GetTestResults(GetTestResultsRequest req, VisorSessionData session)
-		{
-			return tvs.GetTestRuns(req.Skip, req.Limit)
-				.Where(tr => tr.TestPlanId == req.TestPlanId || true).ToArray ();
-		}
+		public static ITestVisorService tvs;
 
+		public class GetTestResults : IAjaxMethod<VisorSessionData, TestRunInfo[]>
+		{
+			public string TestPlanId;
+			public int Skip;
+			public int Limit;
+
+			public TestRunInfo[] Call(VisorSessionData session)
+			{
+				Thread.Sleep(3000);
+				return tvs.GetTestRuns(Skip, Limit)
+					.Where(tr => tr.TestPlanId == TestPlanId || true).ToArray ();
+			}
+		}
 	}
 }
 
