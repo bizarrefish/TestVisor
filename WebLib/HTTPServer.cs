@@ -7,6 +7,8 @@ using System.Text;
 
 namespace Bizarrefish.WebLib
 {
+	public delegate string AjaxCallback<TSessionData>(TSessionData data, string req);
+
 	public class HTTPServer<TSessionData>
 		where TSessionData : new()
 	{
@@ -26,15 +28,33 @@ namespace Bizarrefish.WebLib
 			
 		
 		const string COOKIE_ID = "COOKIE_ID";
+
+		const string AJAX_PREFIX = "/Ajax";
 		
 		long sessionCounter;
+
+		string staticDir;
 		
 		HttpListener listener;
-		
-		public HTTPServer (int port)
+
+		IDictionary<string, AjaxCallback<TSessionData>> callbacks =
+			new Dictionary<string, AjaxCallback<TSessionData>>();
+
+		public HTTPServer (int port, string staticDir)
 		{
 			listener = new HttpListener();
 			listener.Prefixes.Add ("http://*:" + port + "/");
+			this.staticDir = staticDir;
+		}
+
+		public void AddCallback(string name, AjaxCallback<TSessionData> callback)
+		{
+			callbacks[name] = callback;
+		}
+
+		public string GetCallbackUrl(string name)
+		{
+			return AJAX_PREFIX + "/" + name;
 		}
 		
 		
@@ -73,7 +93,7 @@ namespace Bizarrefish.WebLib
 			return session;
 		}
 		
-		public void Start(Func<string, TSessionData, string, string> handleFunc)
+		public void Start()
 		{
 			listener.Start();
 			while(true)
@@ -82,34 +102,44 @@ namespace Bizarrefish.WebLib
 				
 				try 
 				{
-					if(!context.Request.Url.LocalPath.StartsWith ("/Static"))
+					if(context.Request.Url.LocalPath.StartsWith (AJAX_PREFIX))
 					{
 						context.Response.StatusCode = 200;
 						context.Response.ContentType = "application/json";
 						
 						TSessionData session = GetSessionObject(context.Request, context.Response);
-						
-						var sr = new StreamReader(context.Request.InputStream);
-						string reqString = sr.ReadToEnd();
-						
-						string resString = handleFunc(context.Request.Url.LocalPath, session, reqString);
-						
-						byte[] bytes = Encoding.UTF8.GetBytes(resString);
-						
-						context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+
+						string callbackName = context.Request.Url.LocalPath.Replace(AJAX_PREFIX + "/", "");
+
+						AjaxCallback<TSessionData> callback;
+						if(callbacks.TryGetValue(callbackName, out callback))
+						{
+							var sr = new StreamReader(context.Request.InputStream);
+							string reqString = sr.ReadToEnd();
+							
+							string resString = callback(session, reqString);
+							
+							byte[] bytes = Encoding.UTF8.GetBytes(resString);
+							
+							context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+						}
+						else
+						{
+							context.Response.StatusCode = 404;
+						}
 					}
 					else
 					{
-						var path = context.Request.Url.LocalPath.Replace("/Static", "/");
-						var pathParts = path.Split ('.');
+						string path = context.Request.Url.LocalPath;
+						string[] pathParts = path.Split ('.');
 						context.Response.StatusCode = 200;
 						context.Response.ContentType = contentTypes[pathParts[pathParts.Length-1]];
 						
-						string fileName = "../../WebStatic" + path.Replace ("..", "");
+						string fileName = staticDir + path.Replace ("..", "");
 						
 						if(File.Exists (fileName)) 
 						{
-							using(var st = new FileStream(fileName, FileMode.Open))
+							using(var st = File.OpenRead(fileName))
 							{
 								var reader = new BinaryReader(st);
 								const int bufferSize = 4096;

@@ -269,8 +269,6 @@ namespace Bizarrefish.TestVisorStorage
 			string testKeyListKey = MakeTestKeySetKey(runId);
 			string resultKey = MakeResultKey(runId, testKey);
 
-
-			client.AddItemToSet(runIdListKey, runId);
 			client.AddItemToSet(testKeyListKey, testKey);
 
 			client.SetEntry (resultKey, jss.Serialize(result));
@@ -291,7 +289,7 @@ namespace Bizarrefish.TestVisorStorage
 				}
 				client.RemoveAll (testKeys.Select(tk => MakeResultKey(runId, tk)));
 				client.Remove (MakeTestKeySetKey(runId));
-				client.RemoveItemFromSet(runIdListKey, runId);
+				//client.RemoveItemFromSet(runIdListKey, runId);
    			}
 		}
 

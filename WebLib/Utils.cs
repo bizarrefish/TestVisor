@@ -7,19 +7,19 @@ namespace Bizarrefish.WebLib
 {
 	internal static class Utils
 	{
-		public const string GenRPC =
-@"function GenRPC(methodName, argNames) {
+		public static string GenRPC =
+@"function GenRPC(url, methodName, argNames) {
 	return function(args, success, fail) {
 		var reqKey = null;
 
 		// The initial request
 		var doRequest = function() {
-			ajax('/' + methodName, {Args: args}, callback);
+			ajax(url, {Args: args}, callback);
 		}
 
 		// The poll request
 		var doPoll = function(withArgs) {
-			ajax('/' + methodName, {Key: reqKey}, callback);
+			ajax(url, {Key: reqKey}, callback);
 		}
 
 		// The callback to handle the responses
@@ -52,10 +52,10 @@ namespace Bizarrefish.WebLib
 			return mi.MakeGenericMethod(t).Invoke(Serializer, new[] { obj });
 		}
 		
-		public static object MakeJavascript(JSFunction jsf)
+		public static object MakeJavascript(string url, string funcName, string[] funcFields)
 		{
-			string fieldsArray = Serializer.Serialize(jsf.RequestType.GetFields().Select ((f) => f.Name));
-			return "var " + jsf.Name + " = GenRPC('" + jsf.Name + "', " + fieldsArray + ");";
+			string fieldsArray = Serializer.Serialize(funcFields);
+			return "var " + funcName + " = GenRPC('"+ url + "', '" + funcName + "', " + fieldsArray + ");";
 		}
 	}
 	
