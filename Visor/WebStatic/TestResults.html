@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TestVisor</title>
+		<link rel="stylesheet" type="text/css" href="style.css" ></link>
+	</head>
+	<body>
+		<header>
+				<h1><img src="visor.png"></img><span id="headerText">Page Title Here</span></h1>
+		</header>
+		<div class="navBar"></div>
+		
+		<!-- Home -->
+		<div id="homeModule" class="module" style="display:none;margin:30px;">
+			<div class="heading">Test Visor</div>
+			<div>Welcome to testVisor</div>
+		</div>
+		
+		<!-- Test Plans -->
+		<div id="testPlanListModule" class="module" style="display:none; width:50%; float:left">
+			<div class="heading">Test Plans</div>
+			<br>
+			<div id="testPlanList"></div>
+		</div>
+		
+		
+		<div id="testPlanEditor" class="module" style="display:none; width:60%; float:left">
+			<div class="heading">Test Plan Editor</div>
+			<div style="text-align:left">
+				<input type="button" value="Reload"></input>
+				<br>
+				<input type="button" value="Save"></input>
+			</div>
+			<textarea id="testPlanEditorArea"></textarea>
+			
+		</div>
+		
+		<!-- Test Runs -->
+		<div id="testRunListModule" class="module" style="display:none;width:30%;float:left">
+			<div class="heading">Test Runs</div>
+			<br>
+			<div>
+				<div style="float:right"><input type="button" value="Next Page >" id="nextResults"></input></div>
+				<div style="float:left"><input type="button" value="< Previous Page" id="prevResults"></input></div>
+			</div>
+			<br>
+			<div id="testRunList" class="divList"></div>
+			<div id="testRunListDesc" class="desc">Test Results</div>
+		</div>
+		
+		<!-- Test Results -->
+		<div id="resultsContainer" style="float:left; width:50%; display:none">
+			<div id="testResultListModule" class="module">
+				<div id="resultListHeading" class="heading">Results</div>
+				<div id="testResultList" class="divList"></div>
+			</div>
+			
+			<div id="testResultModule" class="module">
+				<div id="resultHeading" class="heading">Details</div>
+				<div id="testResult" class="divList"></div>
+				<br>
+				<div id="artifactListHeading" class="heading">Artifacts</div>
+				<div id="artifactList" class="divList"></div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="edit_area/edit_area_full.js"></script>
+		<script type="text/javascript" src="divList.js"></script>
+		<script type="text/javascript" src="statusBox.js"></script>
+		<script type="text/javascript" src="navBar.js"></script>
+		<script type="text/javascript" src="module.js"></script>
+		<script type="text/javascript" src="views.js"></script>
+		<script type="text/javascript">
+			// The ajax function
+			function ajax(uri, params, callback)
+			{
+				 $.ajax({
+				 	url: uri,
+				 	dataType: "json",
+				 	data: JSON.stringify(params),
+					type: "POST",
+					processData: false,
+					contentType: "application/json"
+				 }).done(function(data, status) {
+				 	if(status === "success") callback(data);
+				 });
+			}
+		</script>
+		<script type="text/javascript" src="ajax.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				
+				var idctr = 0;
+				
+				// Initialize modules		
+				Module_Add("homeModule");
+				Module_Add("testPlanListModule");
+				Module_Add("testPlanInfoModule");
+				Module_Add("testPlanEditor");
+				Module_Add("testRunListModule");
+				Module_Add("resultsContainer");
+				
+				// Initalize views
+				Views_Init({
+					"Home" : [ "homeModule" ],
+					"Test Plans" : [ "testPlanListModule" , "testPlanInfoModule", "testPlanEditor"],
+					"Results" : [ "testRunListModule", "resultsContainer"]
+				});
+				
+				var testPlanMap = {};
+				
+				Views_OpenFunction("Test Plans", function() {
+					var idctr = 0;
+					
+					
+					function AddPlanDetail(name, value) {
+						DivList_Add("div#testPlanInfoList", "plandetail-" + (idctr++), name, value)
+					}
+					
+					function AddPlan(testPlan) {
+						DivList_Add("div#testPlanList", "plan-" + (idctr++), testPlan.Name, "", "visor.png", function() {
+							DivList_Clear("div#testPlanInfoList");
+							AddPlanDetail("Id", testPlan.Id);
+							AddPlanDetail("Name", testPlan.Name);
+						});
+					}
+					
+					editAreaLoader.init({
+						id : "testPlanEditorArea"		// textarea id
+						,syntax: "js"			// syntax to be uses for highgliting
+						,start_highlight: true		// to display with highlight mode on start-up
+					})
+					
+					DivList_Clear("div#testPlanList");
+					AddPlan({Name: "Test Plan 1", Id: "tp1"});
+					
+					Plans_GetTestPlans({}, function(testPlans) {
+						for(var i in testPlans) {
+							var obj = testPlans[i];
+							testPlanMap[obj.Id] = obj;
+						}
+					});
+				});
+				
+				Views_OpenFunction("Results", function() {
+					var idctr = 0;
+					var resStart = 0;
+					var resLimit = 5;
+					
+					function AddResultDetail(name, value)
+					{
+						DivList_Add("div#testResult", "part-" + (idctr++), name, value)
+					}
+					
+					function AddArtifact(obj)
+					{
+						DivList_Add("div#artifactList", "artifact-" + (idctr++), obj.Name, obj.FileName);
+					}
+					
+					function UpdateResult(testKey, obj)
+					{
+						DivList_Clear("div#testResult");
+						DivList_Clear("div#artifactList");
+						
+						$("div#resultHeading").text(testKey + " Details");
+						$("div#artifactHeading").text(testKey + " Artifacts");
+						
+						AddResultDetail("Success", obj.Result.Success);
+						AddResultDetail("Execution Time", obj.Result.ExecutionTime);
+						
+						for(var i in obj.Artifacts)
+						{
+							AddArtifact(obj.Artifacts[i])
+						}
+					}
+					
+					function AddTestResult(testKey, obj) {
+						var id = "result-" + (idctr++)
+						DivList_Add("div#testResultList", id, testKey, testKey, "visor.png", function() {
+							DivList_Select("div#testResultList", id);
+							UpdateResult(testKey, obj);
+						});
+						return id;
+					}
+					
+					function UpdateResultsList(testRun) {
+						$("div#resultsContainer").fadeOut(function() {
+							$("div#resultListHeading").text(testRun.Name);
+							
+							DivList_Clear("div#testResultList");
+							DivList_Clear("div#testResults, div#artifactList");
+							
+							var first = true;
+							for(var testKey in testRun.Results) {
+								var result = testRun.Results[testKey];
+								var id = AddTestResult(testKey, result);
+								DivList_Select("div#testResultList", id);
+								UpdateResult(testKey, result);
+								first = false;
+							}
+							$("div#resultsContainer").fadeIn();
+						});
+					}
+					
+					function AddTestRun(obj) {
+						var id = "run-" + (idctr++)
+						DivList_Add("div#testRunList", id, obj.Name, obj.Description, "visor.png", function() {
+							UpdateResultsList(obj);
+							DivList_Select("div#testRunList", id);
+						});
+					}
+					
+					function UpdateRunsList(start, limit, testPlan) {
+						resStart = start;
+						resLimit = limit;
+						testPlanId = testPlan;
+						
+						DivList_Clear("div#testRunList");
+						DivList_Add("div#testRunList", "loading-runs", "Loading Runs...", "");
+						Results_GetTestResults({
+							Skip: start,
+							Limit: limit,
+							TestPlanId: testPlan
+						}, function(results) {
+							DivList_Clear("div#testRunList")
+							for(var i in results)
+							{
+								AddTestRun(results[i]);
+							}
+							
+							$("div#testRunListDesc").text("Showing results: " + start + " to " + (start + limit - 1));
+						});
+					}
+					
+					var testPlanId = "lol";
+					
+					
+					$("input#nextResults").unbind("click").click(function() {
+						UpdateRunsList(resStart + resLimit, resLimit, testPlanId);
+					});
+					
+					$("input#prevResults").unbind("click").click(function() {
+						var newStart = resStart - resLimit;
+						if(newStart < 0) newStart = 0;
+						UpdateRunsList(newStart, resLimit, testPlanId);
+					});
+					
+					UpdateRunsList(0, resLimit, testPlanId);
+					
+				});
+				
+			});
+		</script>
+	</body>
+</html>
