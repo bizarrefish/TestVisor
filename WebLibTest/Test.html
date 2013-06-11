@@ -4,8 +4,8 @@
 	</head>	
 	<body>
 		
-		<input type="button" class="busyDisable" value="Up" onClick="DoCall(CountUp, {CountNumber: 1})"></input>
-		<input type="button" class="busyDisable" value="Down" onClick="DoCall(CountDown, {CountNumber: 1})"></input>
+		<input type="button" class="busyDisable" value="Up" onClick="DoCall(TestApp_CountUp, {CountNumber: 1})"></input>
+		<input type="button" class="busyDisable" value="Down" onClick="DoCall(TestApp_CountDown, {CountNumber: 1})"></input>
 		<div id="output">0</div>
 		<div id="message"></div>
 		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
@@ -50,7 +50,7 @@
 				Busy();
 				rpcFunc(value, function(data) { Done(); SetOutput(data, true); }, function(ErrorText) { Done(); alert(ErrorText) });
 			}
-			CountUp({CountNumber: 0}, function(data) { Done(); SetOutput(data, false)})
+			TestApp_CountUp({CountNumber: 0}, function(data) { Done(); SetOutput(data, false)})
 			
 		</script>
 	</body>

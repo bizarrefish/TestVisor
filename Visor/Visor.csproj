@@ -33,8 +33,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Visor.cs" />
-    <Compile Include="GetTestPlans.cs" />
-    <Compile Include="GetTestResults.cs" />
+    <Compile Include="Results.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

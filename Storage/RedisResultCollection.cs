@@ -203,7 +203,7 @@ namespace Bizarrefish.TestVisorStorage
 			string id = client.IncrementValue (MakeRunCounterKey()).ToString ();
 
 			client.PushItemToList(runIdListKey, id);
-			testRunInfos.Store(new TestRun()
+			SetInfo(new TestRun()
 			{
 				Id = id,
 				Name = runName,
@@ -211,6 +211,11 @@ namespace Bizarrefish.TestVisorStorage
 			});
 
 			return id;
+		}
+
+		public void SetInfo(TestRun info)
+		{
+			testRunInfos.Store (info);
 		}
 
 		public ITestResultBin CreateResultBin(string runId, string testKey)

@@ -23,43 +23,49 @@ namespace WebLibTest
 	
 	public class TestApp
 	{
-		static CountResponse CountUp(CountRequest req, SessionData session)
+		public class CountUp : IAjaxMethod<SessionData, CountResponse>
 		{
-			Thread.Sleep(4000);
-			session.count = session.count + req.CountNumber;
-			return new CountResponse()
+			public int CountNumber;
+
+			public CountResponse Call (SessionData session)
 			{
-				Message = "Counted up!",
-				NewCount = session.count
-			};
+				Thread.Sleep(4000);
+				session.count = session.count + CountNumber;
+				return new CountResponse()
+				{
+					Message = "Counted up!",
+					NewCount = session.count
+				};
+			}
 		}
-		
-		static CountResponse CountDown(CountRequest req, SessionData session)
+
+		public class CountDown : IAjaxMethod<SessionData, CountResponse>
 		{
-			throw new Exception("ERROR, THERE IS AN ERROR!");
-			session.count = session.count - req.CountNumber;
-			return new CountResponse()
+			public int CountNumber;
+
+			public CountResponse Call (SessionData session)
 			{
-				Message = "Counted down!",
-				NewCount = session.count
-			};
+				session.count = session.count - CountNumber;
+				return new CountResponse()
+				{
+					Message = "Counted down!",
+					NewCount = session.count
+				};
+			}
 		}
-		
+
 		public TestApp ()
 		{
-			AjaxHandler<SessionData> handler = new AjaxHandler<SessionData>();
-			handler.AddEndpoint<CountRequest, CountResponse>("CountUp", CountUp);
-			handler.AddEndpoint<CountRequest, CountResponse>("CountDown", CountDown);
+			HTTPServer<SessionData> server = new HTTPServer<SessionData>(8080, "../../");
+			AjaxHandler<SessionData> handler = new AjaxHandler<SessionData>(server);
+
+			handler.AddClass<TestApp>();
 			
 			File.Delete("../../ajax.js");
 			File.WriteAllText("../../ajax.js", handler.GetJavascript());
-			
-			HTTPServer<SessionData> server = new HTTPServer<SessionData>(8088);
-			
-			server.AddFunc("CountUp");
-			server.AddFunc("CountDown");
-			
-			server.Start (handler.Handle);
+
+			server.Start();
+
 		}
 	}
 	

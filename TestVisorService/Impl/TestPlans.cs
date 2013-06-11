@@ -51,7 +51,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		/// </summary>
 		public void SetInfo(TestPlanInfo info)
 		{
-			throw new NotImplementedException();
+			tpr.SetInfo(info);
 		}
 		
 		/// <summary>

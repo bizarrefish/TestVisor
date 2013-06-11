@@ -36,8 +36,10 @@ namespace Visor
 
 			Results.tvs = tvs;
 			Plans.tvs = tvs;
+			Machines.tvs = tvs;
 			ajaxHandler.AddClass<Results>();
 			ajaxHandler.AddClass<Plans>();
+			ajaxHandler.AddClass<Machines>();
 
 			File.Delete("../../ajax.js");
 			File.WriteAllText("../../WebStatic/ajax.js", ajaxHandler.GetJavascript());

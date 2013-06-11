@@ -36,4 +36,9 @@ function GenRPC(url, methodName, argNames) {
 }
 
 var Results_GetTestResults = GenRPC('/Ajax/Results_GetTestResults', 'Results_GetTestResults', ["TestPlanId","Skip","Limit"]);
+var Plans_Start = GenRPC('/Ajax/Plans_Start', 'Plans_Start', ["TestPlanId","MachineId"]);
+var Plans_SetSource = GenRPC('/Ajax/Plans_SetSource', 'Plans_SetSource', ["TestPlanId","Source"]);
+var Plans_GetSource = GenRPC('/Ajax/Plans_GetSource', 'Plans_GetSource', ["TestPlanId"]);
+var Plans_SetInfo = GenRPC('/Ajax/Plans_SetInfo', 'Plans_SetInfo', ["Info"]);
 var Plans_GetTestPlans = GenRPC('/Ajax/Plans_GetTestPlans', 'Plans_GetTestPlans', []);
+var Machines_GetMachines = GenRPC('/Ajax/Machines_GetMachines', 'Machines_GetMachines', []);
