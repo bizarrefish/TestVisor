@@ -150,7 +150,10 @@ namespace Bizarrefish.TestVisorService
 			Console.Write("Test Plan: ");
 			string testPlanId = Console.ReadLine ();
 
-			tvs.EnqueueTestPlan(machineId, testPlanId, delegate(string runId, TaskState state)
+			IDictionary<string, string> args = new Dictionary<string, string>();
+			args.Add("Machine", machineId);
+
+			tvs.EnqueueTestPlan(testPlanId, args, delegate(string runId, TaskState state)
 			{
 				Console.WriteLine(runId + " : " + state.ToString());
 				if(state == TaskState.COMPLETE)

@@ -19,24 +19,27 @@ namespace Bizarrefish.TestVisorStorage
 			this.name = name;
 		}
 
-		Stream OpenWithFunction(Func<string, Stream> func)
+		Stream OpenWithFunction(bool deleteFirst, Func<string, Stream> func)
 		{
 			string fileName = client.GetValueFromHash(hashKey, name);
 			if(fileName == null)
 			{
 				throw new Exception("Resource: " + name + " has been removed from the index");
 			}
+
+			if (deleteFirst) File.Delete(fileName);
+
 			return func(fileName);
 		}
 
 		public System.IO.Stream Read ()
 		{
-			return OpenWithFunction(File.OpenRead);
+			return OpenWithFunction(false, File.OpenRead);
 		}
 
 		public void Write (System.IO.Stream s)
 		{
-			using(Stream fileStream = OpenWithFunction(File.OpenWrite))
+			using(Stream fileStream = OpenWithFunction(true, File.OpenWrite))
 			{
 				s.CopyTo(fileStream);
 			}
@@ -44,7 +47,7 @@ namespace Bizarrefish.TestVisorStorage
 
 		public System.IO.Stream Write ()
 		{
-			return OpenWithFunction (File.OpenWrite);
+			return OpenWithFunction (true, File.OpenWrite);
 		}
 	}
 

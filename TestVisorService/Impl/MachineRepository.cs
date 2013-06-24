@@ -14,7 +14,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		public IEnumerable<HypervisorInfo> Hypervisors;
 		
-		IEnumerable<IVMDriver<IMachine>> Drivers;
+		public IEnumerable<IVMDriver<IMachine>> Drivers;
 		
 		public IEnumerable<MachineInfo> Machines { get; set; }
 		

@@ -17,7 +17,7 @@ namespace Bizarrefish.TestVisorService.Interface
 		/// <returns>
 		/// Test result id
 		/// </returns>
-		string EnqueueTestPlan(string machineId, string testPlanId, TestRunListener listener);
+		string EnqueueTestPlan(string testPlanId, IDictionary<string, string> args, TestRunListener listener);
 	}
 }
 

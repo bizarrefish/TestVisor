@@ -4,7 +4,7 @@
 @import "navBar.css";
 
 body {
-	background-color: rgb(88, 131, 129);
+	background-color: black;
 	width: 100%;
 	margin:0px;
 	padding: 0px;
@@ -16,7 +16,7 @@ body {
 
 header {
 	margin:0px;
-	background-color:white;
+	background-color:gray;
 }
 
 header > h1 {
@@ -57,15 +57,6 @@ div.mainContainer {
 	background-color: white;
 }
 
-
-div.machineList {
-	text-align: center;
-	font-size: 14px;
-	padding: 5px;
-	float: left;
-	width:15%;
-	height:100%;
-}
 
 div.machineList div.machineListItem {
 	background-image: linear-gradient(left ,  rgb(196,219,230) 0%, rgb(157,169,217) 64%, rgb(196,219,230) 100%);
@@ -126,7 +117,36 @@ div#testPlanModule {
 	margin-right: 20px;
 }
 
-textarea#testPlanArea {
-	width:100%;
-	height: 70%;
+textarea#testPlanEditorArea {
+	width:90%;
+	height: 700px;
+}
+
+div.testList {
+	margin-top:50px;
+	width:300px;
+	background-color:white;
+	border-bottom:2px solid rgb(88, 131, 129);
+	float:left;
+}
+
+div.testList > div {
+	//text-align:right;
+	border-top:2px solid rgb(88, 131, 129);
+	padding:20px;
+}
+
+div.testContent {
+	margin-top:30px;
+	background-color:white;
+	border:2px solid rgb(88, 131, 129);
+	float:left;
+	width:800px;
+}
+
+div.machineList {
+	background-color: #444;
+	border: 2px solid white;
+	border-radius: 6px;
+	overflow:auto;
 }

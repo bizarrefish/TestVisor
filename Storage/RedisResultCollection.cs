@@ -235,8 +235,8 @@ namespace Bizarrefish.TestVisorStorage
 		/// </summary>
 		public IEnumerable<TestRun> GetRuns(int start, int max)
 		{
-			return client.GetRangeFromList(runIdListKey, start, start + max)
-				.Select (testRunInfos.Load);
+			return client.GetRangeFromList(runIdListKey, -start-max,-start-1)
+				.Select (testRunInfos.Load).Reverse();
 		}
 
 		TestResult GetResult(string runId, string testKey)

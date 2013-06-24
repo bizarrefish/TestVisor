@@ -3,7 +3,7 @@
 */
 
 // Initialize views and navbar
-// ({ ViewName: [moduleId], ... })
+// ({ ViewName: viewId, ... })
 var Views_Init;
 
 // Register a function to call when ViewName is opened
@@ -14,22 +14,21 @@ var Views_OpenFunction;
 	var idctr = 0;
 	var openFunctions = {};
 	
-	Views_Init = function(views) {
+	Views_Init = function() {
 		var navs = []
-		for(var name in views) {
-			
-			(function() {
-				var modList = views[name];
-				var modName = name;
-				
-			
-				navs.push({ Name: modName, Id: "nav-" + (idctr++), Function: function() {
-					Module_SetDisplayed(modList);
-					$("span#headerText").text(modName);
-					if(openFunctions.hasOwnProperty(modName)) openFunctions[modName]();
-				}});
-			})();
-		}
+		var viewDivs = $(".view").each(function() {
+			var d = $(this);
+			var id = d.attr("id");
+			var name = d.children(".heading").text();
+			d.hide();
+			navs.push({ Name: name, Id: "nav-" + id, Function: function() {
+				viewDivs.hide().promise().done(function() {
+					d.fadeIn();
+				});
+				$("#headerText").text(name);
+				if(openFunctions.hasOwnProperty(id)) openFunctions[id]();
+			}});
+		});
 		
 		NavBar_Init("div.navBar", navs);
 	}

@@ -60,7 +60,7 @@ namespace Bizarrefish.VMTestLib.TestDrivers.FileDownloader
 			Repo.Store(blob);
 		}
 
-		public TestResult RunTest (string name, string testKey, Bizarrefish.VMLib.IMachine machine, ITestResultBin bin, System.Collections.Generic.IDictionary<string, string> env)
+		public TestResult RunTest (string name,  Bizarrefish.VMLib.IMachine machine, ITestResultBin bin, System.Collections.Generic.IDictionary<string, string> env)
 		{
 			var blob = Repo.Load<FileDownloaderBlob>();
 

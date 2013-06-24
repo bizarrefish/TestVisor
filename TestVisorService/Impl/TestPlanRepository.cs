@@ -10,6 +10,11 @@ using System.Linq;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
+	class TestPlanRepositoryData
+	{
+		int testPlanId;
+	}
+
 	public class TestPlanRepository
 	{	
 		ITestRepository repo;
@@ -30,9 +35,11 @@ namespace Bizarrefish.TestVisorService.Impl
 			planInfos = new RedisInfoCollection<TestPlanInfo>(client, () => new TestPlanInfo());
 		}
 		
-		public void CreateTestPlan(string name)
+		public TestPlanInfo CreateTestPlan()
 		{
-			repo.CreateResource(name);
+			string id = DateTime.Now.Ticks.ToString();
+			repo.CreateResource(id);
+			return GetInfo (id);
 		}
 
 		public void SetInfo(TestPlanInfo info)

@@ -6,61 +6,89 @@
 	</head>
 	<body>
 		<header>
-				<h1><img src="visor.png"></img><span id="headerText">Page Title Here</span></h1>
+			<h1><img src="visor.png"></img><span id="headerText">Page Title Here</span></h1>
 		</header>
 		<div class="navBar"></div>
 		
 		<!-- Home -->
-		<div id="homeModule" class="module" style="display:none;margin:30px;">
-			<div class="heading">Test Visor</div>
-			<div>Welcome to testVisor</div>
+		<div id="homeView" class="view">
+			<div class="heading" style="display:none">Home</div>
+			<div id="homeModule" class="module">
+				<div class="heading">Test Visor</div>
+				<div>Welcome to testVisor</div>
+			</div>
 		</div>
 		
 		<!-- Test Plans -->
-		<div id="testPlanListModule" class="module" style="display:none; width:50%; float:left">
-			<div class="heading">Test Plans</div>
-			<br>
-			<div id="testPlanList"></div>
-		</div>
-		
-		
-		<div id="testPlanEditor" class="module" style="display:none; width:60%; float:left">
-			<div class="heading">Test Plan Editor</div>
-			<div style="text-align:left">
-				<input type="button" value="Reload"></input>
-				<br>
-				<input type="button" value="Save"></input>
-			</div>
-			<textarea id="testPlanEditorArea"></textarea>
+		<div id="testPlanView" class="view">
+			<div class="heading" style="display:none">Test Plans</div>
 			
+			
+			<div style="width:20%;float:left">
+				<div id="testPlanListModule" class="module">
+					<div class="heading">Test Plans</div>
+					<br>
+					<div id="testPlanList"></div>
+				</div>
+			</div>
+			
+			<div style="width:80%;float:left">
+				<div id="testPlanEditor" class="module">
+					<div class="heading"></div>
+					<div style="text-align:left">
+						<input type="button" value="Save" id="testPlanSaveButton"></input>
+						<input type="button" value="Run" id="testPlanRunButton"></input>
+					</div>
+					<textarea id="testPlanEditorArea"></textarea>
+					
+				</div>
+			</div>
+
 		</div>
 		
 		<!-- Test Runs -->
-		<div id="testRunListModule" class="module" style="display:none;width:30%;float:left">
-			<div class="heading">Test Runs</div>
-			<br>
-			<div>
-				<div style="float:right"><input type="button" value="Next Page >" id="nextResults"></input></div>
-				<div style="float:left"><input type="button" value="< Previous Page" id="prevResults"></input></div>
-			</div>
-			<br>
-			<div id="testRunList" class="divList"></div>
-			<div id="testRunListDesc" class="desc">Test Results</div>
-		</div>
-		
-		<!-- Test Results -->
-		<div id="resultsContainer" style="float:left; width:50%; display:none">
-			<div id="testResultListModule" class="module">
-				<div id="resultListHeading" class="heading">Results</div>
-				<div id="testResultList" class="divList"></div>
+		<div id="resultsView" class="view">
+			<div class="heading" style="display:none">Test Results</div>
+			<div id="testRunListModule" class="module" style="width:30%;float:left;">
+				<div class="heading">Test Runs</div>
+				<br>
+				<div>
+					<div style="float:right"><input type="button" value="Next Page >" id="nextResults"></input></div>
+					<div style="float:left"><input type="button" value="< Previous Page" id="prevResults"></input></div>
+				</div>
+				<br>
+				<div id="testRunList" class="divList"></div>
+				<div id="testRunListDesc" class="desc">Test Results</div>
 			</div>
 			
-			<div id="testResultModule" class="module">
-				<div id="resultHeading" class="heading">Details</div>
-				<div id="testResult" class="divList"></div>
-				<br>
-				<div id="artifactListHeading" class="heading">Artifacts</div>
-				<div id="artifactList" class="divList"></div>
+			<!-- Test Results -->
+			<div id="resultsContainer" style="float:left; width:50%;">
+				<div id="testResultListModule" class="module">
+					<div id="resultListHeading" class="heading">Results</div>
+					<div id="testResultList" class="divList"></div>
+				</div>
+				
+				<div id="testResultModule" class="module">
+					<div id="resultHeading" class="heading">Details</div>
+					<div id="testResult" class="divList"></div>
+					<br>
+					<div id="artifactListHeading" class="heading">Artifacts</div>
+					<div id="artifactList" class="divList"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="view" id="testView">
+			<div class="heading" style="display:none">Test</div>
+			<div class="testList">
+				<div>Plan1</div>
+				<div>Plan2</div>
+				<div>Plan3</div>
+			</div>
+			'
+			<div class="testContent">
+				<h1>Test Stuff</h1>
+				<br><br><br><br><br>
 			</div>
 		</div>
 		
@@ -103,28 +131,60 @@
 				Module_Add("resultsContainer");
 				
 				// Initalize views
-				Views_Init({
-					"Home" : [ "homeModule" ],
-					"Test Plans" : [ "testPlanListModule" , "testPlanInfoModule", "testPlanEditor"],
-					"Results" : [ "testRunListModule", "resultsContainer"]
-				});
+				Views_Init();
 				
 				var testPlanMap = {};
 				
-				Views_OpenFunction("Test Plans", function() {
+				Views_OpenFunction("testPlanView", function() {
 					var idctr = 0;
 					
+					var currentTestPlanId;
 					
-					function AddPlanDetail(name, value) {
-						DivList_Add("div#testPlanInfoList", "plandetail-" + (idctr++), name, value)
+					function LoadTestPlanSource(id) {
+						Plans_GetSource({TestPlanId: id}, function(source) {
+							editAreaLoader.setValue("testPlanEditorArea", source)
+							currentTestPlanId = id;
+						});
+						
+						DivList_Select("div#testPlanList", "plan-" + id);
 					}
 					
-					function AddPlan(testPlan) {
-						DivList_Add("div#testPlanList", "plan-" + (idctr++), testPlan.Name, "", "visor.png", function() {
-							DivList_Clear("div#testPlanInfoList");
-							AddPlanDetail("Id", testPlan.Id);
-							AddPlanDetail("Name", testPlan.Name);
+					function SaveTestPlanSource() {
+						Plans_SetSource({
+							TestPlanId: currentTestPlanId,
+							Source: editAreaLoader.getValue("testPlanEditorArea")
+						}, function() {
+							alert("Saved");
 						});
+					}
+					
+					$("#testPlanSaveButton").unbind('click').click(SaveTestPlanSource);
+					
+					$("#testPlanRunButton").unbind('click').click(function() {
+						Plans_Start({
+							TestPlanId: currentTestPlanId,
+							Arguments: {}
+						}, function() {
+						
+						});
+					});
+					
+					function AddPlan(testPlan) {
+						DivList_Add("div#testPlanList", "plan-" + testPlan.Id, testPlan.Name, testPlan.Description, "visor.png", function() {
+							$("#testPlanEditor > .heading").text(testPlan.Name);
+							LoadTestPlanSource(testPlan.Id);
+						});
+					}
+					
+					function NewTestPlan() {
+						var name = window.prompt("Name of new test plan", "");
+						if(name !== "") {
+							Plans_Create({
+								Info: { Name: name, Description: name }
+							}, function() {
+								RefreshTestPlanList();
+							});
+						}
 					}
 					
 					editAreaLoader.init({
@@ -133,18 +193,22 @@
 						,start_highlight: true		// to display with highlight mode on start-up
 					})
 					
-					DivList_Clear("div#testPlanList");
-					AddPlan({Name: "Test Plan 1", Id: "tp1"});
+					function RefreshTestPlanList() {
 					
-					Plans_GetTestPlans({}, function(testPlans) {
-						for(var i in testPlans) {
-							var obj = testPlans[i];
-							testPlanMap[obj.Id] = obj;
-						}
-					});
+						DivList_Clear("div#testPlanList");
+						Plans_GetTestPlans({}, function(testPlans) {
+							for(var i in testPlans) {
+								var obj = testPlans[i];
+								AddPlan(obj);
+							}
+							DivList_Add("div#testPlanList", "addnewplan", "Add New...", "Create a new test plan", "plus.png", NewTestPlan);
+						});
+					}
+					
+					RefreshTestPlanList();
 				});
 				
-				Views_OpenFunction("Results", function() {
+				Views_OpenFunction("resultsView", function() {
 					var idctr = 0;
 					var resStart = 0;
 					var resLimit = 5;

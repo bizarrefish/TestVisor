@@ -50,9 +50,12 @@
     <Compile Include="Utils.cs" />
     <Compile Include="TestRepository.cs" />
     <Compile Include="TestDrivers\WindowsBatch.cs" />
-    <Compile Include="JSTestPlan.cs" />
     <Compile Include="TestDetail.cs" />
     <Compile Include="TestDrivers\FileDownloader.cs" />
+    <Compile Include="JS\JSTestPlan.cs" />
+    <Compile Include="JS\CallableTest.cs" />
+    <Compile Include="JS\SnapshotObject.cs" />
+    <Compile Include="JS\Helpers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -63,5 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BatchTest.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="JS\" />
   </ItemGroup>
 </Project>

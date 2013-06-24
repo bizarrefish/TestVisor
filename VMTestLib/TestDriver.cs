@@ -95,7 +95,7 @@ namespace Bizarrefish.VMTestLib
 		/// <param name='env'>
 		/// Variables to pass to the test.
 		/// </param>
-		TestResult RunTest(string name, string testKey, IMachine machine, ITestResultBin bin, IDictionary<string, string> env);
+		TestResult RunTest(string name,  IMachine machine, ITestResultBin bin, IDictionary<string, string> env);
 	}
 }
 

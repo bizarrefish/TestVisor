@@ -74,14 +74,14 @@ namespace Bizarrefish.VMTestLib.TestDrivers.WindowsBatch
 			Repo.Store (data);
 		}
 
-		public TestResult RunTest (string name, string testKey, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
+		public TestResult RunTest (string name, IMachine machine, ITestResultBin bin, IDictionary<string, string> env)
 		{
 			ITestResource res = Repo.GetResource(name);
 
 			TestResult tr = new TestResult();
 			try
 			{
-				string winDirectory = TestPathPrefix + name + "\\" + testKey + "\\";
+				string winDirectory = TestPathPrefix + name + "\\" + DateTime.Now.Ticks + "\\";
 				
 				string targetFileName = winDirectory + name + ".bat";
 				using (Stream s = res.Read())

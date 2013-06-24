@@ -9,6 +9,7 @@ using System.Threading;
 using Bizarrefish.TestVisorStorage;
 using Bizarrefish.VMLib;
 using ServiceStack.Redis;
+using Bizarrefish.VMTestLib.JS;
 
 namespace Bizarrefish.TestVisorService.Impl
 {
@@ -42,8 +43,10 @@ namespace Bizarrefish.TestVisorService.Impl
 		/// </summary>
 		public TestPlanInfo CreateTestPlan(string name)
 		{
-			tpr.CreateTestPlan(name);
-			return tpr.TestPlans.Where(tp => tp.Id == name).First ();
+			TestPlanInfo info = tpr.CreateTestPlan();
+			info.Name = name;
+			tpr.SetInfo(info);
+			return info;
 		}
 		
 		/// <summary>
@@ -126,11 +129,10 @@ namespace Bizarrefish.TestVisorService.Impl
 		{
 			results.DeleteRun(runId);
 		}
-		
-		public string EnqueueTestPlan (string machineId, string testPlanId, TestRunListener listener)
+
+
+		public string EnqueueTestPlan (string testPlanId, IDictionary<string, string> args, TestRunListener listener)
 		{
-			
-			var machine = machines.GetMachine (machineId);
 			
 			string testPlanCode;
 			using(Stream tpStream = tpr.ReadTestPlan(testPlanId))
@@ -141,39 +143,40 @@ namespace Bizarrefish.TestVisorService.Impl
 				}
 			}
 
-			string initSnapshotId = machine.GetSnapshots().Where (ss => ss.Name == "TEST_INIT").First ().Id;
-
+			// Create a new run
 			string runId = results.CreateRun("Run at " + DateTime.Now.TimeOfDay);
 
 			listener(runId, TaskState.PENDING);
 			Thread t = new Thread(delegate()
 			{
-				// Open "TEST_INIT" snapshot
-				machine.Start(initSnapshotId);
-				
-				JSTestRunner runner = new JSTestRunner(testDriverManager.Drivers, machine,
-				                                       testKey => results.CreateResultBin(runId, testKey),
-				                                       (testKey, result) => results.SetResult(runId, testKey, result));
-				listener(runId, TaskState.RUNNING);
-				try
+
+				// Environment for this run
+				IJSTestProvider provider = new TestProvider(
+					machines.Drivers.SelectMany (d => d.Machines),
+					testDriverManager.Drivers,
+					results,
+					runId);
+
+				// Javascript runner
+				using(JSTestRunner runner = new JSTestRunner("TEST_INIT",args, provider))
 				{
-					// Run our javascript
-					runner.Execute(testPlanCode);
-					listener(runId, TaskState.COMPLETE);
+					listener(runId, TaskState.RUNNING);
+					try
+					{
+						// Run our javascript
+						runner.Execute(testPlanCode, new Dictionary<string, string>());
+						listener(runId, TaskState.COMPLETE);
+					}
+					catch(Exception e)
+					{
+						Console.WriteLine(e.Message);
+						listener(runId, TaskState.FAILED);
+					}
+
+					// This will get run by the "using" block, regardless.
+					runner.CleanUp();
 				}
-				catch(Exception e)
-				{
-					listener(runId, TaskState.FAILED);
-				}
-				
-				// Revert to initial snapshot
-				machine.Start(initSnapshotId);
-				
-				// Delete accumulated snapshots
-				runner.DeleteSnapshots();
-				
-				// Shutdown VM
-				machine.Shutdown();	
+
 			});
 			
 			t.Start();
@@ -198,7 +201,7 @@ namespace Bizarrefish.TestVisorService.Impl
 				try
 				{
 					machine.Start(initSnapshotId);
-					TestResult res = driver.RunTest(name, "default", machine,results.CreateResultBin(runId, "default"), env);
+					TestResult res = driver.RunTest(name, machine,results.CreateResultBin(runId, "default"), env);
 					results.SetResult(runId, "default", res);
 				}
 				catch(Exception e)
@@ -209,7 +212,6 @@ namespace Bizarrefish.TestVisorService.Impl
 						StandardError = e.Message
 					});
 				}
-				//resultFunc(GetTestRunInfo(runId));
 			}).Start();
 
 
@@ -219,6 +221,43 @@ namespace Bizarrefish.TestVisorService.Impl
 		{
 			var driver = testDriverManager.GetTestDriver(name);
 			return driver.GetTestParamters(name);
+		}
+
+	}
+
+	class TestProvider : IJSTestProvider
+	{
+		RedisResultCollection results;
+		string runId;
+		IEnumerable<IMachine> machines;
+		IEnumerable<ITestDriver> drivers;
+
+		public TestProvider(IEnumerable<IMachine> machines, IEnumerable<ITestDriver> drivers, RedisResultCollection results, string runId)
+		{
+			this.results = results;
+			this.runId = runId;
+			this.machines = machines;
+			this.drivers = drivers;
+		}
+
+		public ITestResultBin CreateBin (string testKey)
+		{
+			return results.CreateResultBin(runId, testKey);
+		}
+
+		public void OnResult (string testKey, TestResult result)
+		{
+			results.SetResult(runId, testKey, result);
+		}
+
+		public IEnumerable<IMachine> GetMachines ()
+		{
+			return machines;
+		}
+
+		public IEnumerable<ITestDriver> GetTestDrivers ()
+		{
+			return drivers;
 		}
 	}
 }
