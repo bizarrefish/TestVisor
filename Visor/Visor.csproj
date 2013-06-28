@@ -35,6 +35,7 @@
     <Compile Include="Visor.cs" />
     <Compile Include="Results.cs" />
     <Compile Include="Plans.cs" />
+    <Compile Include="Status.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

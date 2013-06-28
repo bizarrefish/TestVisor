@@ -30,7 +30,7 @@ namespace Bizarrefish.WebLib
 		const string COOKIE_ID = "COOKIE_ID";
 
 		const string AJAX_PREFIX = "/Ajax";
-		
+
 		long sessionCounter;
 
 		string staticDir;
@@ -78,21 +78,19 @@ namespace Bizarrefish.WebLib
 			
 			if(sessions.TryGetValue(id, out session))
 			{
-				//sessionsTime.Remove (session.LastActive);
-				//session.LastActive = now;
+				//sessionsTime[id] = DateTime.Now;
 			}
 			else
 			{
 				session = new TSessionData();
 				sessions[id] = session;
 			}
-
 			
 			resp.SetCookie(c);
 			
 			return session;
 		}
-		
+
 		public void Start()
 		{
 			listener.Start();

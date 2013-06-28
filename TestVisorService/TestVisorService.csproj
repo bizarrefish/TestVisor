@@ -46,6 +46,7 @@
     <Compile Include="Impl\TestPlanRepository.cs" />
     <Compile Include="Impl\TestPlans.cs" />
     <Compile Include="Interface\TestRunInfo.cs" />
+    <Compile Include="Impl\TestInvocationManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMLib\VMLib.csproj">

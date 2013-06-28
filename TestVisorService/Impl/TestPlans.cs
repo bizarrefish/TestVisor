@@ -19,6 +19,8 @@ namespace Bizarrefish.TestVisorService.Impl
 		
 		string ResultsDirectory;
 
+		TestInvocationManager tim;
+
 		RedisResultCollection results;
 		
 		void InitTestPlans()
@@ -28,6 +30,9 @@ namespace Bizarrefish.TestVisorService.Impl
 			tpr = new TestPlanRepository(client, baseDirectory + "/TestPlans", "TestPlans");
 			ResultsDirectory = baseDirectory + "/TestResults";
 			results = new RedisResultCollection(client, ResultsDirectory);
+
+			tim = new TestInvocationManager(results, machines, tpr, testDriverManager);
+			tim.Start();
 		}
 		
 		/// <summary>
@@ -130,58 +135,14 @@ namespace Bizarrefish.TestVisorService.Impl
 			results.DeleteRun(runId);
 		}
 
-
 		public string EnqueueTestPlan (string testPlanId, IDictionary<string, string> args, TestRunListener listener)
 		{
-			
-			string testPlanCode;
-			using(Stream tpStream = tpr.ReadTestPlan(testPlanId))
-			{
-				using(StreamReader reader = new StreamReader(tpStream))
-				{
-					testPlanCode = reader.ReadToEnd();
-				}
-			}
-
-			// Create a new run
-			string runId = results.CreateRun("Run at " + DateTime.Now.TimeOfDay);
-
-			listener(runId, TaskState.PENDING);
-			Thread t = new Thread(delegate()
-			{
-
-				// Environment for this run
-				IJSTestProvider provider = new TestProvider(
-					machines.Drivers.SelectMany (d => d.Machines),
-					testDriverManager.Drivers,
-					results,
-					runId);
-
-				// Javascript runner
-				using(JSTestRunner runner = new JSTestRunner("TEST_INIT",args, provider))
-				{
-					listener(runId, TaskState.RUNNING);
-					try
-					{
-						// Run our javascript
-						runner.Execute(testPlanCode, new Dictionary<string, string>());
-						listener(runId, TaskState.COMPLETE);
-					}
-					catch(Exception e)
-					{
-						Console.WriteLine(e.Message);
-						listener(runId, TaskState.FAILED);
-					}
-
-					// This will get run by the "using" block, regardless.
-					runner.CleanUp();
-				}
-
-			});
-			
-			t.Start();
-			
-			return runId;
+			return tim.EnqueueTestPlan(testPlanId, args);
+		}
+		
+		public SystemStatus GetCurrentStatus ()
+		{
+			return tim.GetCurrentStatus();
 		}
 
 		public void RunStandaloneTest(string name, string machineId, IDictionary<string, string> env, Action<TestRunInfo> resultFunc)

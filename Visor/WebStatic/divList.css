@@ -16,8 +16,8 @@ div.divList {
 }
 
 div.divListItem {
-	border-top: 1px solid gray;
-	border-bottom: 1px solid gray;
+	border-top: 1px solid rgb(184, 197, 193);
+	border-bottom: 1px solid rgb(184, 197, 193);
 	padding: 2px;
 	padding-left: 10px;
 	

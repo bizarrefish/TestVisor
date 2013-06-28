@@ -4,7 +4,7 @@
 @import "navBar.css";
 
 body {
-	background-color: black;
+	background-color: rgb(145, 189, 189);
 	width: 100%;
 	margin:0px;
 	padding: 0px;
@@ -16,7 +16,8 @@ body {
 
 header {
 	margin:0px;
-	background-color:gray;
+	background-color:lightgray;
+	text-align:center;
 }
 
 header > h1 {
@@ -28,6 +29,11 @@ header > h1 > span#headerText {
 	vertical-align:middle;
 	margin:10px;
 }
+
+.navBar {
+	text-align:center;
+}
+
 
 header > h1 > img {
 	vertical-align:middle;

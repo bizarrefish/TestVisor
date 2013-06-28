@@ -23,6 +23,7 @@ namespace Bizarrefish.TestVisorService.Impl
 			InitTests ();
 			InitTestPlans ();
 		}
+
 	}
 }
 

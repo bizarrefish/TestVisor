@@ -1,6 +1,7 @@
 div.navBar {
-	background-color: gray;
+	background-color: lightgray;
 	padding-left:5px;
+	
 }
 
 div.navBar > div.navButton {
@@ -23,8 +24,8 @@ div.navBar > div.navButton {
 }
 
 div.navBar > div.navButton.selected {
-	background-color: black;
-	color: gray;
+	background-color: rgb(145, 189, 189);
+	color: white;
 }
 
 div.navBar > div.navButton:not(.selected):hover {
