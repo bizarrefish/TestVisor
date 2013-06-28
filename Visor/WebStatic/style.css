@@ -4,7 +4,7 @@
 @import "navBar.css";
 
 body {
-	background-color: rgb(145, 189, 189);
+	background-color: rgb(25, 109, 95);
 	width: 100%;
 	margin:0px;
 	padding: 0px;
@@ -16,7 +16,7 @@ body {
 
 header {
 	margin:0px;
-	background-color:lightgray;
+	background-color:white;
 	text-align:center;
 }
 

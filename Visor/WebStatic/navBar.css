@@ -1,7 +1,6 @@
 div.navBar {
-	background-color: lightgray;
-	padding-left:5px;
-	
+	background-color: white;
+	padding-top:10px;
 }
 
 div.navBar > div.navButton {
@@ -24,7 +23,7 @@ div.navBar > div.navButton {
 }
 
 div.navBar > div.navButton.selected {
-	background-color: rgb(145, 189, 189);
+	background-color: rgb(25, 109, 95);
 	color: white;
 }
 
