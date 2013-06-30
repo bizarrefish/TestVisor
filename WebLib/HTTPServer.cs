@@ -30,6 +30,7 @@ namespace Bizarrefish.WebLib
 		const string COOKIE_ID = "COOKIE_ID";
 
 		const string AJAX_PREFIX = "/Ajax";
+		const string STREAM_PREFIX = "/Stream";
 
 		long sessionCounter;
 
@@ -39,6 +40,9 @@ namespace Bizarrefish.WebLib
 
 		IDictionary<string, AjaxCallback<TSessionData>> callbacks =
 			new Dictionary<string, AjaxCallback<TSessionData>>();
+
+		IDictionary<string, Func<string, Stream>> streamFuncs =
+			new Dictionary<string, Func<string, Stream>>();
 
 		public HTTPServer (int port, string staticDir)
 		{
@@ -52,11 +56,20 @@ namespace Bizarrefish.WebLib
 			callbacks[name] = callback;
 		}
 
+		public void AddStreamFunc(string name, Func<string, Stream> func)
+		{
+			streamFuncs[name] = func;
+		}
+
 		public string GetCallbackUrl(string name)
 		{
 			return AJAX_PREFIX + "/" + name;
 		}
-		
+
+		public string GetStreamUrl(string name, string id)
+		{
+			return STREAM_PREFIX + "/" + name + "/" + id;
+		}
 		
 		TSessionData GetSessionObject(HttpListenerRequest req, HttpListenerResponse resp)
 		{	
@@ -100,14 +113,17 @@ namespace Bizarrefish.WebLib
 				
 				try 
 				{
+					
+					TSessionData session = GetSessionObject(context.Request, context.Response);
+
+					context.Response.StatusCode = 200;
+
 					if(context.Request.Url.LocalPath.StartsWith (AJAX_PREFIX))
 					{
-						context.Response.StatusCode = 200;
-						context.Response.ContentType = "application/json";
-						
-						TSessionData session = GetSessionObject(context.Request, context.Response);
 
 						string callbackName = context.Request.Url.LocalPath.Replace(AJAX_PREFIX + "/", "");
+						
+						context.Response.ContentType = "application/json";
 
 						AjaxCallback<TSessionData> callback;
 						if(callbacks.TryGetValue(callbackName, out callback))
@@ -116,7 +132,7 @@ namespace Bizarrefish.WebLib
 							string reqString = sr.ReadToEnd();
 							
 							string resString = callback(session, reqString);
-							
+
 							byte[] bytes = Encoding.UTF8.GetBytes(resString);
 							
 							context.Response.OutputStream.Write(bytes, 0, bytes.Length);
@@ -125,6 +141,37 @@ namespace Bizarrefish.WebLib
 						{
 							context.Response.StatusCode = 404;
 						}
+					}
+					else if(context.Request.Url.LocalPath.StartsWith(STREAM_PREFIX))
+					{
+						string[] parts = context.Request.Url.LocalPath.Replace(STREAM_PREFIX + "/", "").Split ('/');
+						string streamKey = parts[0];
+						string streamId = parts[1];
+
+						Func<string, Stream> streamFunc;
+
+						if(streamFuncs.TryGetValue(streamKey, out streamFunc))
+						{
+							using(Stream s = streamFunc(streamId))
+							{
+								switch(context.Request.HttpMethod)
+								{
+								case "GET":
+									context.Response.ContentType = "application/octet-stream";
+									s.CopyTo(context.Response.OutputStream);
+									break;
+
+								case "POST":
+									context.Request.InputStream.CopyTo(s);
+									break;
+								}
+							}
+						}
+						else
+						{
+							context.Response.StatusCode = 404;
+						}
+
 					}
 					else
 					{

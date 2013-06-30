@@ -45,6 +45,11 @@ namespace Bizarrefish.TestVisorService.Interface
 		IEnumerable<TestRunInfo> GetTestRuns(int start, int max);
 
 		/// <summary>
+		/// Gets a single test run
+		/// </summary>
+		TestRunInfo GetTestRun(string id);
+
+		/// <summary>
 		/// Read an artifact
 		/// </summary>
 		Stream ReadArtifact(string testRunId, string resultId, int artifactNumber);

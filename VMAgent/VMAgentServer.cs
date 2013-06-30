@@ -69,7 +69,6 @@ namespace Bizarrefish.VMAgent
 			}
 
 			response.OutputStream.Write (responseBytes, 0, responseBytes.Length);
-			response.OutputStream.Close ();
 		}
 		
 		static void GetFileHandler(HttpListenerRequest request, HttpListenerResponse response)
@@ -100,7 +99,6 @@ namespace Bizarrefish.VMAgent
 				response.StatusCode = 501;
 				Log ("File doesn't exist");
 			}
-			response.OutputStream.Close ();
 		}
 		
 		static void GetFileListHandler(HttpListenerRequest request, HttpListenerResponse response)
@@ -118,7 +116,6 @@ namespace Bizarrefish.VMAgent
 			response.ContentType = "text/plain";
 			byte[] responseBytes = Encoding.UTF8.GetBytes(output);
 			response.OutputStream.Write (responseBytes, 0, responseBytes.Length);
-			response.OutputStream.Close ();
 		}
 		
 		static void StartProgramHandler(HttpListenerRequest request, HttpListenerResponse response)
@@ -207,7 +204,6 @@ namespace Bizarrefish.VMAgent
 			
 			byte[] bytes = Encoding.UTF8.GetBytes (jss.Serialize (res));
 			response.OutputStream.Write(bytes, 0, bytes.Length);
-			response.OutputStream.Close();
 		}
 		
 		static void GetProgramResultHandler(HttpListenerRequest request, HttpListenerResponse response)

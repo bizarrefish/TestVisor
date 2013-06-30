@@ -36,6 +36,7 @@
     <Compile Include="Results.cs" />
     <Compile Include="Plans.cs" />
     <Compile Include="Status.cs" />
+    <Compile Include="Streams.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -64,6 +65,8 @@
     <None Include="WebStatic\navBar.js" />
     <None Include="WebStatic\module.js" />
     <None Include="WebStatic\views.js" />
+    <None Include="WebStatic\loading.css" />
+    <None Include="WebStatic\loading.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">

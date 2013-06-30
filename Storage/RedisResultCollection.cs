@@ -53,7 +53,7 @@ namespace Bizarrefish.TestVisorStorage
 				string infoString = jss.Serialize(info);
 				client.SetEntry(MakeArtifactInfoKey(number), infoString);
 
-				string fileName = MakeArtifactFilename(number);
+				string fileName = MakeArtifactFilename(number-1);
 
 				using(var fs = File.OpenWrite(fileName))
 				{
@@ -83,11 +83,11 @@ namespace Bizarrefish.TestVisorStorage
 			}
 		}
 
-		public Stream ReadArtifact(long artifactNumber)
+		public Stream ReadArtifact(long artifactIndex)
 		{
 			using(var myLock = client.AcquireLock(lockKey))
 			{
-				return File.OpenRead(MakeArtifactFilename(artifactNumber));
+				return File.OpenRead(MakeArtifactFilename(artifactIndex));
 			}
 		}
 
@@ -239,6 +239,11 @@ namespace Bizarrefish.TestVisorStorage
 				.Select (testRunInfos.Load).Reverse();
 		}
 
+		public TestRun GetRun(string runId)
+		{
+			return testRunInfos.Load(runId);
+		}
+
 		TestResult GetResult(string runId, string testKey)
 		{
 			var result = client.GetValue(MakeResultKey(runId, testKey));
@@ -277,6 +282,12 @@ namespace Bizarrefish.TestVisorStorage
 			client.AddItemToSet(testKeyListKey, testKey);
 
 			client.SetEntry (resultKey, jss.Serialize(result));
+		}
+
+		public Stream ReadArtifact(string runId, string testKey, int artifactIndex)
+		{
+			var bin = MakeResultBin(runId, testKey);
+			return bin.ReadArtifact(artifactIndex);
 		}
 
 		/// <summary>

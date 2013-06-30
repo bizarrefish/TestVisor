@@ -4,6 +4,7 @@ using Bizarrefish.WebLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 namespace Visor
 {
@@ -65,6 +66,7 @@ namespace Visor
 
 			public bool Call(VisorSessionData session)
 			{
+				Thread.Sleep(3000);
 				using(Stream s = tvs.WriteTestPlan(TestPlanId))
 				{
 					using(StreamWriter writer = new StreamWriter(s))

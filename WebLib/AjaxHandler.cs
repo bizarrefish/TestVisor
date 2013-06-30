@@ -48,6 +48,7 @@ namespace Bizarrefish.WebLib
 			this.server = server;
 		}
 
+
 		public void AddClass<TClass>()
 		{
 			Type t = typeof(TClass);

@@ -2,6 +2,7 @@
 @import "module.css";
 @import "statusBox.css";
 @import "navBar.css";
+@import "loading.css";
 
 body {
 	background-color: rgb(25, 109, 95);

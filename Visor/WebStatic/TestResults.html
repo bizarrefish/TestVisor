@@ -79,6 +79,12 @@
 			</div>
 		</div>
 		
+		<div id="loading">
+			<div class="inner">
+				<span>Loading...</span>
+			</div>
+		</div>
+		
 		<div class="view" id="testView">
 			<div class="heading" style="display:none">Test</div>
 			<div class="testList">
@@ -92,6 +98,7 @@
 				<br><br><br><br><br>
 			</div>
 		</div>
+		<form id="hiddenForm" style="display:none"></form>
 		
 		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="edit_area/edit_area_full.js"></script>
@@ -100,6 +107,7 @@
 		<script type="text/javascript" src="navBar.js"></script>
 		<script type="text/javascript" src="module.js"></script>
 		<script type="text/javascript" src="views.js"></script>
+		<script type="text/javascript" src="loading.js"></script>
 		<script type="text/javascript">
 			// The ajax function
 			function ajax(uri, params, callback)
@@ -151,11 +159,13 @@
 					}
 					
 					function SaveTestPlanSource() {
+						Loading_Start();
 						Plans_SetSource({
 							TestPlanId: currentTestPlanId,
 							Source: editAreaLoader.getValue("testPlanEditorArea")
 						}, function() {
-							alert("Saved");
+							//alert("Saved");
+							Loading_Stop();
 						});
 					}
 					
@@ -219,12 +229,23 @@
 						DivList_Add("div#testResult", "part-" + (idctr++), name, value)
 					}
 					
-					function AddArtifact(obj)
+					function AddArtifact(runId, testKey, artifactIndex, obj)
 					{
-						DivList_Add("div#artifactList", "artifact-" + (idctr++), obj.Name, obj.FileName);
+						DivList_Add("div#artifactList", "artifact-" + (idctr++), obj.Name, obj.FileName, undefined, function() {
+							Results_GetArtifactUrl({
+								RunId: runId,
+								TestKey: testKey,
+								ArtifactIndex: artifactIndex
+							}, function(url) {
+								var frm = document.getElementById("hiddenForm");
+								frm.action = url;
+								frm.method = "GET";
+								frm.submit();
+							});
+						});
 					}
 					
-					function UpdateResult(testKey, obj)
+					function UpdateResult(runId, testKey, obj)
 					{
 						DivList_Clear("div#testResult");
 						DivList_Clear("div#artifactList");
@@ -237,15 +258,15 @@
 						
 						for(var i in obj.Artifacts)
 						{
-							AddArtifact(obj.Artifacts[i])
+							AddArtifact(runId, testKey, i, obj.Artifacts[i]);
 						}
 					}
 					
-					function AddTestResult(testKey, obj) {
+					function AddTestResult(runId, testKey, obj) {
 						var id = "result-" + (idctr++)
 						DivList_Add("div#testResultList", id, testKey, testKey, "visor.png", function() {
 							DivList_Select("div#testResultList", id);
-							UpdateResult(testKey, obj);
+							UpdateResult(runId, testKey, obj);
 						});
 						return id;
 					}
@@ -260,13 +281,29 @@
 							var first = true;
 							for(var testKey in testRun.Results) {
 								var result = testRun.Results[testKey];
-								var id = AddTestResult(testKey, result);
+								var id = AddTestResult(testRun.Id, testKey, result);
 								DivList_Select("div#testResultList", id);
-								UpdateResult(testKey, result);
+								//UpdateResult(testRun.Id, testKey, result);
 								first = false;
 							}
 							$("div#resultsContainer").fadeIn();
 						});
+					
+						// Auto refresh
+						setTimeout(function() {
+							var currentRunId = testRun.Id;
+							
+							Results_GetTestResult({
+								Id: currentRunId
+							}, function(run) {
+							
+								if(run.Results.length !== testRun.Results.length)
+									UpdateResultsList(run);
+									
+							})
+							
+						}, 6000);
+						
 					}
 					
 					function AddTestRun(obj) {

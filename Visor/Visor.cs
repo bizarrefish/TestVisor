@@ -33,8 +33,12 @@ namespace Visor
 			ajaxHandler = new AjaxHandler<VisorSessionData>(server);
 
 			tvs = new TestVisorService(Directory.GetCurrentDirectory());
+			
+			Streams<VisorSessionData> streams = new Streams<VisorSessionData>(server, tvs);
+
 
 			Results.tvs = tvs;
+			Results.streams = streams;
 			Plans.tvs = tvs;
 			Machines.tvs = tvs;
 			Status.tvs = tvs;
@@ -43,6 +47,9 @@ namespace Visor
 			ajaxHandler.AddClass<Plans>();
 			ajaxHandler.AddClass<Machines>();
 			ajaxHandler.AddClass<Status>();
+
+
+			Console.WriteLine(streams.GetArtifactUrl("43","A little test",0));
 
 			File.Delete("../../ajax.js");
 			File.WriteAllText("../../WebStatic/ajax.js", ajaxHandler.GetJavascript());

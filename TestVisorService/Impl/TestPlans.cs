@@ -89,22 +89,36 @@ namespace Bizarrefish.TestVisorService.Impl
 			return tpr.WriteTestPlan(id);
 		}
 
+		TestRunInfo ToInfo(TestRun run)
+		{
+			var tri = new TestRunInfo();
+			tri.Id = run.Id;
+			tri.Name = run.Name;
+			tri.When = run.When;
+			tri.Description = "Test run on " + run.When;
+			tri.Results = GetResultInfos(run.Id);
+			return tri;
+		}
+
 		public IEnumerable<TestRunInfo> GetTestRuns(int start, int max)
 		{
 			IEnumerable<TestRun> runs = results.GetRuns(start, max);
 
-			foreach(var run in runs)
-			{
-				var tri = new TestRunInfo();
-				tri.Id = run.Id;
-				tri.Name = run.Name;
-				tri.When = run.When;
-				tri.Description = "Test run on " + run.When;
-				tri.Results = GetResultInfos(run.Id);
-				yield return tri;
-			}
+			return runs.Select (ToInfo);
 		}
 
+		public TestRunInfo GetTestRun(string id)
+		{
+			var run = results.GetRun(id);
+			if(run != null)
+			{
+				return ToInfo(run);
+			}
+			else
+			{
+				return null;
+			}
+		}
 
 		IDictionary<string, TestResultInfo> GetResultInfos(string runId)
 		{
@@ -122,8 +136,7 @@ namespace Bizarrefish.TestVisorService.Impl
 		/// </summary>
 		public Stream ReadArtifact(string testRunId, string resultId, int artifactNumber)
 		{
-			var fName = results.GetArtifacts(testRunId, resultId)[artifactNumber].FileName;
-			return File.OpenRead(fName);
+			return results.ReadArtifact(testRunId, resultId, artifactNumber);
 		}
 
 		

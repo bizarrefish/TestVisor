@@ -14,6 +14,8 @@ namespace Visor
 	{
 		public static ITestVisorService tvs;
 
+		public static Streams<VisorSessionData> streams;
+
 		public class GetTestResults : IAjaxMethod<VisorSessionData, TestRunInfo[]>
 		{
 			public string TestPlanId;
@@ -27,6 +29,30 @@ namespace Visor
 					.Where(tr => tr.TestPlanId == TestPlanId || true).ToArray ();
 			}
 		}
+
+		public class GetArtifactUrl : IAjaxMethod<VisorSessionData, string>
+		{
+			public string RunId;
+			public string TestKey;
+			public int ArtifactIndex;
+
+			public string Call(VisorSessionData session)
+			{
+				return streams.GetArtifactUrl(RunId, TestKey, ArtifactIndex);
+			}
+		}
+
+
+		public class GetTestResult : IAjaxMethod<VisorSessionData, TestRunInfo>
+		{
+			public string Id;
+
+			public TestRunInfo Call(VisorSessionData session)
+			{
+				return tvs.GetTestRun(Id);
+			}
+		}
+
 	}
 
 	public class Machines
