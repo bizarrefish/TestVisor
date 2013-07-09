@@ -63,10 +63,12 @@
     <None Include="WebStatic\TestResults.html" />
     <None Include="WebStatic\navBar.css" />
     <None Include="WebStatic\navBar.js" />
-    <None Include="WebStatic\module.js" />
     <None Include="WebStatic\views.js" />
     <None Include="WebStatic\loading.css" />
     <None Include="WebStatic\loading.js" />
+    <None Include="WebStatic\testPlans.js" />
+    <None Include="WebStatic\results.js" />
+    <None Include="WebStatic\tests.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">

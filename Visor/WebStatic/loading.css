@@ -9,18 +9,22 @@ div#loading {
 }
 
 div#loading > div.inner {
-	border: 2px solid white;
+	border: 1px solid black;
 	margin-left:auto;
 	margin-right:auto;
 	margin-top:100px;
 	width:300px;
-	background-color:black;
+	background-color:white;
 	border-radius:10px;
-	color:white;
+	color:black;
 	text-align:center;
 	padding:10px;
 }
 
 div#loading > div.inner > span {
 	vertical-align:middle;
+	padding:20px;
+}
+div#loading > div.inner > img {
+	width:40px;
 }

@@ -2,39 +2,43 @@
 	Trying to deal with paginated views
 */
 
-// Initialize views and navbar
-// ({ ViewName: viewId, ... })
-var Views_Init;
-
-// Register a function to call when ViewName is opened
-// (ViewName, func)
-var Views_OpenFunction;
-
-(function() {
-	var idctr = 0;
-	var openFunctions = {};
+var Views_Init = function() {
+	var navs = []
 	
-	Views_Init = function() {
-		var navs = []
-		var viewDivs = $(".view").each(function() {
-			var d = $(this);
-			var id = d.attr("id");
-			var name = d.children(".heading").text();
-			d.hide();
-			navs.push({ Name: name, Id: "nav-" + id, Function: function() {
-				viewDivs.hide().promise().done(function() {
-					d.fadeIn();
-				});
-				$("#headerText").text(name);
-				if(openFunctions.hasOwnProperty(id)) openFunctions[id]();
-			}});
-		});
+	var viewObj = {};
+	
+	var viewDivs = $(".view").each(function() {
+		var d = $(this);
+		var id = d.attr("id");
+		var name = d.children(".heading").text();
+		d.hide();
 		
-		NavBar_Init("div.navBar", navs);
-	}
+		var openFunc = function() {};
+		var closeFunc = function() {};
+		
+		viewObj[id] = {
+			OnOpen: function(handler) {
+				var old = openFunc;
+				openFunc = function() { old(); handler() };
+			},
+			
+			OnClose: function(handler) {
+				var old = closeFunc;
+				closeFunc = function() { old(); handler(); };
+			}
+		};
+		
+		navs.push({ Name: name, Id: "nav-" + id, Function: function() {
+			viewDivs.hide().promise().done(function() {
+				d.fadeIn();
+			});
+			$("#headerText").text(name);
+			
+			openFunc();
+		}});
+	});
 	
-	Views_OpenFunction = function(viewName, func) {
-		openFunctions[viewName] = func;
-	};
-})();
+	NavBar_Init("div.navBar", navs);
+	return viewObj;
+}
 

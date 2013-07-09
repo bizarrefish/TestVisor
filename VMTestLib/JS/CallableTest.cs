@@ -88,8 +88,10 @@ namespace Bizarrefish.VMTestLib.JS
 
 		TestResult InvokeTest(IMachine machine, string testKey, IDictionary<string, string> parameters)
 		{
+			ITestResultBin bin = provider.CreateBin(testKey);
+
 			initFunc(machine);
-			var testResult = func(machine, parameters, provider.CreateBin(testKey));
+			var testResult = func(machine, parameters, bin);
 			provider.OnResult(testKey, testResult);
 			return testResult;
 		}

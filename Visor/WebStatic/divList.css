@@ -62,5 +62,5 @@ div.divListItem:not(:hover) > div.desc {
 
 div.divListItem > img.icon {
 	width: 30px;
-	border: 1px solid black;
+	//border: 1px solid black;
 }

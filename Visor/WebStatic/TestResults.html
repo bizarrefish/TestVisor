@@ -10,13 +10,35 @@
 			<div style="float:right"><div><br><br><br><br></div></div>
 		</header>
 		<div class="navBar"></div>
-
-		<!-- Home -->
-		<div id="homeView" class="view">
-			<div class="heading" style="display:none">Home</div>
-			<div id="homeModule" class="module">
-				<div class="heading">Test Visor</div>
-				<div>Welcome to testVisor</div>
+		
+		<!-- Tests -->
+		<div id="testView" class="view">
+			<div class="heading" style="display:none">Tests</div>
+			
+			<div class="module" style="width:30%; padding:10px;float:left;">
+				<div class="heading">Upload</div>
+				
+				<p>
+					<label for="testFile">Test File</label>
+					<input name="testFile" type="file" id="testFile"></input>
+				</p>
+				<p>
+				
+					<label for="testTypeSelect">Test Type</label>
+					<select id="testTypeSelect" name="testTypeSelect">
+						<option>Windows Batch File (.bat)</option>
+						<option>File Download List (.csv)</option>
+					</select>
+				</p>
+				<p>
+					<input type="submit"></input>
+				</p>
+			</div>
+			<div class="module" style="width:50%; float:left">
+				<div class="heading">Installed Tests</div>
+				<div id="testList" class="divList">
+					
+				</div>
 			</div>
 		</div>
 		
@@ -62,7 +84,7 @@
 				<div id="testRunListDesc" class="desc">Test Results</div>
 			</div>
 			
-			<!-- Test Results -->
+			<!-- Test Results, Artifacts -->
 			<div id="resultsContainer" style="float:left; width:50%;">
 				<div id="testResultListModule" class="module">
 					<div id="resultListHeading" class="heading">Results</div>
@@ -79,25 +101,13 @@
 			</div>
 		</div>
 		
+		<!-- Loading Bar -->
 		<div id="loading">
 			<div class="inner">
-				<span>Loading...</span>
+				<img src="wait.png"></img><span>Loading...</span>
 			</div>
 		</div>
-		
-		<div class="view" id="testView">
-			<div class="heading" style="display:none">Test</div>
-			<div class="testList">
-				<div>Plan1</div>
-				<div>Plan2</div>
-				<div>Plan3</div>
-			</div>
-			'
-			<div class="testContent">
-				<h1>Test Stuff</h1>
-				<br><br><br><br><br>
-			</div>
-		</div>
+
 		<form id="hiddenForm" style="display:none"></form>
 		
 		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
@@ -125,235 +135,12 @@
 			}
 		</script>
 		<script type="text/javascript" src="ajax.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-			
-				
-				var idctr = 0;
-				
-				// Initialize modules		
-				Module_Add("homeModule");
-				Module_Add("testPlanListModule");
-				Module_Add("testPlanInfoModule");
-				Module_Add("testPlanEditor");
-				Module_Add("testRunListModule");
-				Module_Add("resultsContainer");
-				
-				// Initalize views
-				Views_Init();
-				
-				var testPlanMap = {};
-				
-				Views_OpenFunction("testPlanView", function() {
-					var idctr = 0;
-					
-					var currentTestPlanId;
-					
-					function LoadTestPlanSource(id) {
-						Plans_GetSource({TestPlanId: id}, function(source) {
-							editAreaLoader.setValue("testPlanEditorArea", source)
-							currentTestPlanId = id;
-						});
-						
-						DivList_Select("div#testPlanList", "plan-" + id);
-					}
-					
-					function SaveTestPlanSource() {
-						Loading_Start();
-						Plans_SetSource({
-							TestPlanId: currentTestPlanId,
-							Source: editAreaLoader.getValue("testPlanEditorArea")
-						}, function() {
-							//alert("Saved");
-							Loading_Stop();
-						});
-					}
-					
-					$("#testPlanSaveButton").unbind('click').click(SaveTestPlanSource);
-					
-					$("#testPlanRunButton").unbind('click').click(function() {
-						Plans_Start({
-							TestPlanId: currentTestPlanId,
-							Arguments: {}
-						}, function() {
-						
-						});
-					});
-					
-					function AddPlan(testPlan) {
-						DivList_Add("div#testPlanList", "plan-" + testPlan.Id, testPlan.Name, testPlan.Description, "visor.png", function() {
-							$("#testPlanEditor > .heading").text(testPlan.Name);
-							LoadTestPlanSource(testPlan.Id);
-						});
-					}
-					
-					function NewTestPlan() {
-						var name = window.prompt("Name of new test plan", "");
-						if(name !== "") {
-							Plans_Create({
-								Info: { Name: name, Description: name }
-							}, function() {
-								RefreshTestPlanList();
-							});
-						}
-					}
-					
-					editAreaLoader.init({
-						id : "testPlanEditorArea"		// textarea id
-						,syntax: "js"			// syntax to be uses for highgliting
-						,start_highlight: true		// to display with highlight mode on start-up
-					})
-					
-					function RefreshTestPlanList() {
-					
-						DivList_Clear("div#testPlanList");
-						Plans_GetTestPlans({}, function(testPlans) {
-							for(var i in testPlans) {
-								var obj = testPlans[i];
-								AddPlan(obj);
-							}
-							DivList_Add("div#testPlanList", "addnewplan", "Add New...", "Create a new test plan", "plus.png", NewTestPlan);
-						});
-					}
-					
-					RefreshTestPlanList();
-				});
-				
-				Views_OpenFunction("resultsView", function() {
-					var idctr = 0;
-					var resStart = 0;
-					var resLimit = 5;
-					
-					function AddResultDetail(name, value)
-					{
-						DivList_Add("div#testResult", "part-" + (idctr++), name, value)
-					}
-					
-					function AddArtifact(runId, testKey, artifactIndex, obj)
-					{
-						DivList_Add("div#artifactList", "artifact-" + (idctr++), obj.Name, obj.FileName, undefined, function() {
-							Results_GetArtifactUrl({
-								RunId: runId,
-								TestKey: testKey,
-								ArtifactIndex: artifactIndex
-							}, function(url) {
-								var frm = document.getElementById("hiddenForm");
-								frm.action = url;
-								frm.method = "GET";
-								frm.submit();
-							});
-						});
-					}
-					
-					function UpdateResult(runId, testKey, obj)
-					{
-						DivList_Clear("div#testResult");
-						DivList_Clear("div#artifactList");
-						
-						$("div#resultHeading").text(testKey + " Details");
-						$("div#artifactHeading").text(testKey + " Artifacts");
-						
-						AddResultDetail("Success", obj.Result.Success);
-						AddResultDetail("Execution Time", obj.Result.ExecutionTime);
-						
-						for(var i in obj.Artifacts)
-						{
-							AddArtifact(runId, testKey, i, obj.Artifacts[i]);
-						}
-					}
-					
-					function AddTestResult(runId, testKey, obj) {
-						var id = "result-" + (idctr++)
-						DivList_Add("div#testResultList", id, testKey, testKey, "visor.png", function() {
-							DivList_Select("div#testResultList", id);
-							UpdateResult(runId, testKey, obj);
-						});
-						return id;
-					}
-					
-					function UpdateResultsList(testRun) {
-						$("div#resultsContainer").fadeOut(function() {
-							$("div#resultListHeading").text(testRun.Name);
-							
-							DivList_Clear("div#testResultList");
-							DivList_Clear("div#testResults, div#artifactList");
-							
-							var first = true;
-							for(var testKey in testRun.Results) {
-								var result = testRun.Results[testKey];
-								var id = AddTestResult(testRun.Id, testKey, result);
-								DivList_Select("div#testResultList", id);
-								//UpdateResult(testRun.Id, testKey, result);
-								first = false;
-							}
-							$("div#resultsContainer").fadeIn();
-						});
-					
-						// Auto refresh
-						setTimeout(function() {
-							var currentRunId = testRun.Id;
-							
-							Results_GetTestResult({
-								Id: currentRunId
-							}, function(run) {
-							
-								if(run.Results.length !== testRun.Results.length)
-									UpdateResultsList(run);
-									
-							})
-							
-						}, 6000);
-						
-					}
-					
-					function AddTestRun(obj) {
-						var id = "run-" + (idctr++)
-						DivList_Add("div#testRunList", id, obj.Name, obj.Description, "visor.png", function() {
-							UpdateResultsList(obj);
-							DivList_Select("div#testRunList", id);
-						});
-					}
-					
-					function UpdateRunsList(start, limit, testPlan) {
-						resStart = start;
-						resLimit = limit;
-						testPlanId = testPlan;
-						
-						DivList_Clear("div#testRunList");
-						DivList_Add("div#testRunList", "loading-runs", "Loading Runs...", "");
-						Results_GetTestResults({
-							Skip: start,
-							Limit: limit,
-							TestPlanId: testPlan
-						}, function(results) {
-							DivList_Clear("div#testRunList")
-							for(var i in results)
-							{
-								AddTestRun(results[i]);
-							}
-							
-							$("div#testRunListDesc").text("Showing results: " + start + " to " + (start + limit - 1));
-						});
-					}
-					
-					var testPlanId = "lol";
-					
-					
-					$("input#nextResults").unbind("click").click(function() {
-						UpdateRunsList(resStart + resLimit, resLimit, testPlanId);
-					});
-					
-					$("input#prevResults").unbind("click").click(function() {
-						var newStart = resStart - resLimit;
-						if(newStart < 0) newStart = 0;
-						UpdateRunsList(newStart, resLimit, testPlanId);
-					});
-					
-					UpdateRunsList(0, resLimit, testPlanId);
-					
-				});
-				
-			});
-		</script>
+		
+		<!-- Initialize views -->
+		<script type="text/javascript">var V = Views_Init();</script>
+		
+		<script type="text/javascript" src="testPlans.js"></script>
+		<script type="text/javascript" src="results.js"></script>
+		<script type="text/javascript" src="tests.js"></script>
 	</body>
 </html>

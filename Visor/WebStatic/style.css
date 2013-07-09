@@ -40,7 +40,7 @@ header > h1 > img {
 	vertical-align:middle;
 	margin:10px;
 	width:50px;
-	border: 1px solid black;
+	//border: 1px solid black;
 }
 
 div.header {
@@ -156,4 +156,27 @@ div.machineList {
 	border: 2px solid white;
 	border-radius: 6px;
 	overflow:auto;
+}
+
+div.resultCard {
+	float:left;
+	margin:10px;
+	padding:5px;
+	background-color:white;
+}
+
+div.resultCard h1 {
+	font-height: 2px;
+}
+
+
+div.resultCard > table {
+	background-color:white;
+	border:2px solid black;
+	width:100%;
+}
+
+div.resultCard td,th {
+	background-color:#DDD;
+	padding:3px;
 }
