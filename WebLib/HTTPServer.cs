@@ -187,31 +187,44 @@ namespace Bizarrefish.WebLib
 					else
 					{
 						string path = context.Request.Url.LocalPath;
-						string[] pathParts = path.Split ('.');
-						context.Response.StatusCode = 200;
-						context.Response.ContentType = contentTypes[pathParts[pathParts.Length-1]];
-						
-						string fileName = staticDir + path.Replace ("..", "");
-						
-						if(File.Exists (fileName)) 
+						if(path == "/")
 						{
-							using(var st = File.OpenRead(fileName))
-							{
-								var reader = new BinaryReader(st);
-								const int bufferSize = 4096;
-								int byteCount = 0;
-								do
-								{
-									byte[] bytes = reader.ReadBytes(bufferSize);
-									byteCount = bytes.Length;
-									if(byteCount > 0) context.Response.OutputStream.Write(bytes, 0, byteCount);
-								}
-								while(byteCount > 0);
-							}
+							path = "/index.html";
+						}
+
+						string[] pathParts = path.Split ('.');
+
+						if(!path.Contains ("."))
+						{
+							context.Response.StatusCode = 404;
 						}
 						else
 						{
-							context.Response.StatusCode = 404;
+							context.Response.StatusCode = 200;
+							context.Response.ContentType = contentTypes[pathParts[pathParts.Length-1]];
+							
+							string fileName = staticDir + path.Replace ("..", "");
+							
+							if(File.Exists (fileName)) 
+							{
+								using(var st = File.OpenRead(fileName))
+								{
+									var reader = new BinaryReader(st);
+									const int bufferSize = 4096;
+									int byteCount = 0;
+									do
+									{
+										byte[] bytes = reader.ReadBytes(bufferSize);
+										byteCount = bytes.Length;
+										if(byteCount > 0) context.Response.OutputStream.Write(bytes, 0, byteCount);
+									}
+									while(byteCount > 0);
+								}
+							}
+							else
+							{
+								context.Response.StatusCode = 404;
+							}
 						}
 						
 					}

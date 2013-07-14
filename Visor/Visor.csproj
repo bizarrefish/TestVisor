@@ -51,17 +51,13 @@
     <Folder Include="WebStatic\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WebStatic\Dashboard.html" />
     <None Include="WebStatic\style.css" />
     <None Include="WebStatic\jquery-1.7.2.min.js" />
     <None Include="WebStatic\divList.css" />
     <None Include="WebStatic\divList.js" />
-    <None Include="WebStatic\TestRunner.html" />
     <None Include="WebStatic\module.css" />
     <None Include="WebStatic\statusBox.css" />
     <None Include="WebStatic\statusBox.js" />
-    <None Include="WebStatic\TestPlans.html" />
-    <None Include="WebStatic\TestResults.html" />
     <None Include="WebStatic\navBar.css" />
     <None Include="WebStatic\navBar.js" />
     <None Include="WebStatic\views.js" />
@@ -70,6 +66,7 @@
     <None Include="WebStatic\testPlans.js" />
     <None Include="WebStatic\results.js" />
     <None Include="WebStatic\tests.js" />
+    <None Include="WebStatic\index.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VMTestLib\VMTestLib.csproj">
