@@ -37,6 +37,7 @@
     <Compile Include="Plans.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Streams.cs" />
+    <Compile Include="Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

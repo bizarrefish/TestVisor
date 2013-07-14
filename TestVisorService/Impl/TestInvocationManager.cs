@@ -13,7 +13,7 @@ namespace Bizarrefish.TestVisorService.Impl
 	{
 		Thread worker;
 
-		volatile SystemStatus CurrentSystemStatus;
+		volatile SystemStatus CurrentSystemStatus = new SystemStatus();
 
 		IList<Action> queue = new List<Action>();
 
@@ -106,6 +106,7 @@ namespace Bizarrefish.TestVisorService.Impl
 					stat.CurrentTestPlan = null;
 					stat.CurrentTestRun = null;
 					stat.CurrentMachine = null;
+					stat.MicroStatus = null;
 					UpdateStatus(stat);
 				});
 			}

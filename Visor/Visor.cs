@@ -42,11 +42,14 @@ namespace Visor
 			Plans.tvs = tvs;
 			Machines.tvs = tvs;
 			Status.tvs = tvs;
+			Tests.tvs = tvs;
+			Tests.streams = streams;
 
 			ajaxHandler.AddClass<Results>();
 			ajaxHandler.AddClass<Plans>();
 			ajaxHandler.AddClass<Machines>();
 			ajaxHandler.AddClass<Status>();
+			ajaxHandler.AddClass<Tests>();
 
 
 			Console.WriteLine(streams.GetArtifactUrl("43","A little test",0));

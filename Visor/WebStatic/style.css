@@ -180,3 +180,30 @@ div.resultCard td,th {
 	background-color:#DDD;
 	padding:3px;
 }
+
+div.editorMenu {
+	background-color:white;
+	overflow:auto;
+	border-radius:5px;
+}
+
+div.editorMenu > div.item {
+	float:left;
+	width:100px;
+	padding:5px;
+	text-align:center;
+}
+
+div.editorMenu > div.label {
+	float:left;
+	width:100px;
+	padding:5px;
+	text-align:center;
+	font-style: italic;
+}
+
+
+div.editorMenu > div.item:hover {
+	background-color:lightblue;
+	cursor:pointer;
+}

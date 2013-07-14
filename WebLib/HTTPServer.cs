@@ -41,8 +41,11 @@ namespace Bizarrefish.WebLib
 		IDictionary<string, AjaxCallback<TSessionData>> callbacks =
 			new Dictionary<string, AjaxCallback<TSessionData>>();
 
-		IDictionary<string, Func<string, Stream>> streamFuncs =
+		IDictionary<string, Func<string, Stream>> streamReadFuncs =
 			new Dictionary<string, Func<string, Stream>>();
+
+		IDictionary<string, Action<string, Stream>> streamWriteFuncs =
+			new Dictionary<string, Action<string, Stream>>();
 
 		public HTTPServer (int port, string staticDir)
 		{
@@ -56,9 +59,14 @@ namespace Bizarrefish.WebLib
 			callbacks[name] = callback;
 		}
 
-		public void AddStreamFunc(string name, Func<string, Stream> func)
+		public void AddStreamReadFunc(string name, Func<string, Stream> func)
 		{
-			streamFuncs[name] = func;
+			streamReadFuncs[name] = func;
+		}
+
+		public void AddStreamWriteFunc(string name, Action<string, Stream> func)
+		{
+			streamWriteFuncs[name] = func;
 		}
 
 		public string GetCallbackUrl(string name)
@@ -148,24 +156,27 @@ namespace Bizarrefish.WebLib
 						string streamKey = parts[0];
 						string streamId = parts[1];
 
-						Func<string, Stream> streamFunc;
+						Func<string, Stream> streamReadFunc;
+						Action<string, Stream> streamWriteFunc;
 
-						if(streamFuncs.TryGetValue(streamKey, out streamFunc))
+
+						if(streamReadFuncs.TryGetValue(streamKey, out streamReadFunc))
 						{
-							using(Stream s = streamFunc(streamId))
+							using(Stream s = streamReadFunc(streamId))
 							{
-								switch(context.Request.HttpMethod)
-								{
-								case "GET":
-									context.Response.ContentType = "application/octet-stream";
-									s.CopyTo(context.Response.OutputStream);
-									break;
+								if(context.Request.HttpMethod != "GET")
+									throw new Exception("Requires GET method");
 
-								case "POST":
-									context.Request.InputStream.CopyTo(s);
-									break;
-								}
+								context.Response.ContentType = "application/octet-stream";
+									s.CopyTo(context.Response.OutputStream);
 							}
+						}
+						else if(streamWriteFuncs.TryGetValue(streamKey, out streamWriteFunc))
+						{
+							if(context.Request.HttpMethod != "POST")
+								throw new Exception("Requires POST method");
+
+							streamWriteFunc(streamId, context.Request.InputStream);
 						}
 						else
 						{
