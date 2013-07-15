@@ -74,7 +74,7 @@ V.resultsView.OnOpen(function() {
 				var id = "result-" + (idctr++)
 				var success = result.Result.Success;
 				var icon = success ? "tick.png" : (success !== null ? "cross.png" : "wait.gif");
-				DivList_Add("div#testResultList", id, testKey, testKey, icon, function() {
+				DivList_Add("div#testResultList", id, testKey, "", icon, function() {
 					DivList_Select("div#testResultList", id);
 					selectedFunc();
 				});
@@ -119,12 +119,12 @@ V.resultsView.OnOpen(function() {
 		var lastStart;
 		var lastCurrentRunId;
 		
-		return function(start, limit, runs, currentRunId) {
+		return function(start, limit, runs, status) {
 		
 			var AddTestRun = function(obj, selectedFunc, icon) {
 				// Give this test run a unique id
 				var id = "run-" + (idctr++)
-				DivList_Add("div#testRunList", id, obj.Name, obj.Description, icon, function() {
+				DivList_Add("div#testRunList", id, obj.Name, obj.desc, icon, function() {
 					DivList_Select("div#testRunList", id);
 					selectedFunc();
 				});
@@ -134,9 +134,31 @@ V.resultsView.OnOpen(function() {
 			var runListDesc = "div#testRunListDesc";
 			
 			// Refresh the list
-			if(start !== lastStart || currentRunId !== lastCurrentRunId) {
+			if(start !== lastStart || status.CurrentTestRun !== lastCurrentRunId) {
 				// Clear the list
 				DivList_Clear(runList);
+				
+				// If there are things going on, we have stuff waiting
+				var queueing = status.CurrentTestRun !== null;
+				
+				// Set run.icon and run.desc
+				for(var i in runs) {
+					var run = runs[i];
+					
+					if(queueing) {
+						if(run.Id === status.CurrentTestRun) {
+							run.icon = "wait.gif";
+							run.desc = status.MicroStatus + "...";
+							queueing = false;
+						} else {
+							run.icon = "pause.png";
+							run.desc = "Waiting..."
+						}
+					} else {
+						run.icon = "tick.png";
+						run.desc = "";
+					}
+				}
 				
 				// Fill with test runs
 				for(var i in runs)
@@ -144,17 +166,13 @@ V.resultsView.OnOpen(function() {
 					// We need to save runIndex for future updates, even if 'runs' changes.
 					(function(runIndex) {
 					
-						// Is the run..running?
-						var isCurrent = runs[runIndex].Id === currentRunId;
-						var icon = isCurrent ? "wait.gif" : "tick.png";
-						
 						var id = AddTestRun(runs[runIndex], function() {
 							selectedRunIndex = runIndex;
 							refreshEverything();
-						}, icon);
+						}, runs[runIndex].icon);
 						
-						// If we selected this one...
-						if(selectedRunIndex === runIndex) {
+						// If we selected this one, or one after it.
+						if(runIndex === selectedRunIndex) {
 							DivList_Select(runList, id);
 						}
 						
@@ -165,7 +183,7 @@ V.resultsView.OnOpen(function() {
 				$(runListDesc).text("Showing results: " + (start+1) + " to " + (start + limit));
 			
 				lastStart = start;
-				lastCurrentRunId = currentRunId;
+				lastCurrentRunId = status.CurrentTestRun;
 			}
 		}
 	})();
@@ -173,10 +191,11 @@ V.resultsView.OnOpen(function() {
 	(function() {
 		var currentRuns = [];
 		var currentRunId = -1;
+		var status = {};
 		
 		refreshEverything = function() {
 			if(currentRuns !== undefined)
-				RefreshRunList(resStart, resLimit, currentRuns, currentRunId);
+				RefreshRunList(resStart, resLimit, currentRuns, status);
 			
 			if(currentRuns[selectedRunIndex] !== undefined)
 				RefreshRun(currentRuns[selectedRunIndex]);
@@ -197,13 +216,13 @@ V.resultsView.OnOpen(function() {
 					TestPlanId: ""
 				}, function(runs) {
 				
-					Status_GetCurrentStatus({}, function(status) {
+					Status_GetCurrentStatus({}, function(_status) {
 					
 						resStart = start;
 						resLimit = limit;
 						currentRuns = runs;
-						currentRunId = status.CurrentTestRun;
-						refreshEverything(runs, status.CurrentTestRun)
+						status = _status;
+						refreshEverything()
 					});
 				});
 			};
@@ -228,6 +247,6 @@ V.resultsView.OnOpen(function() {
 		if(lastInterval !== undefined)
 			clearInterval(lastInterval);
 		
-		lastInterval = setInterval(function() {refreshFunc()}, 3000);
+		lastInterval = setInterval(function() {refreshFunc()}, 1000);
 	})();
 });
