@@ -30,6 +30,14 @@ namespace Visor
 				return streams.GetTestUploadUrl(Name, TypeId);
 			}
 		}
+
+		public class GetTestTypes : IAjaxMethod<VisorSessionData, TestType[]>
+		{
+			public TestType[] Call(VisorSessionData session)
+			{
+				return tvs.TestTypes.ToArray();
+			}
+		}
 	}
 }
 

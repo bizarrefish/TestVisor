@@ -157,7 +157,13 @@ namespace Bizarrefish.VMTestLib.JS
 			}
 			catch(RhinoException err)
 			{
-				throw new Exception("Runtime error: " + err.getMessage());
+				provider.OnResult("Error", new TestResult()
+				{
+					Success = false,
+					StandardError = err.getMessage()
+				});
+				return null;
+				//throw new Exception("Runtime error: " + err.getMessage());
 			}
 		}
 

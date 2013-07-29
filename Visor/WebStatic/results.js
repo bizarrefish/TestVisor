@@ -51,8 +51,16 @@ V.resultsView.OnOpen(function() {
 			$(resultHeading).text(testKey + " Details");
 			$(artifactHeading).text(testKey + " Artifacts");
 			
-			AddResultDetail("Success", result.Result.Success);
-			AddResultDetail("Execution Time", result.Result.ExecutionTime);
+			
+			var IncludeDetail = function(prop, desc) {
+				if(result.Result[prop] !== null) {
+					AddResultDetail(desc, result.Result[prop]);
+				}
+			}
+			IncludeDetail("Success", "Success");
+			IncludeDetail("ExecutionTime", "Execution Time");
+			IncludeDetail("StandardOutput", "Standard Output");
+			IncludeDetail("StandardError", "Standard Error");
 			
 			for(var i in result.Artifacts) {
 				var artifactObj = result.Artifacts[i];

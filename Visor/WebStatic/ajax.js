@@ -46,5 +46,6 @@ var Plans_Create = GenRPC('/Ajax/Plans_Create', 'Plans_Create', ["Info"]);
 var Plans_GetTestPlans = GenRPC('/Ajax/Plans_GetTestPlans', 'Plans_GetTestPlans', []);
 var Machines_GetMachines = GenRPC('/Ajax/Machines_GetMachines', 'Machines_GetMachines', []);
 var Status_GetCurrentStatus = GenRPC('/Ajax/Status_GetCurrentStatus', 'Status_GetCurrentStatus', []);
+var Tests_GetTestTypes = GenRPC('/Ajax/Tests_GetTestTypes', 'Tests_GetTestTypes', []);
 var Tests_GetTestUploadUrl = GenRPC('/Ajax/Tests_GetTestUploadUrl', 'Tests_GetTestUploadUrl', ["TypeId","Name"]);
 var Tests_GetTests = GenRPC('/Ajax/Tests_GetTests', 'Tests_GetTests', []);
