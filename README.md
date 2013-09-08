@@ -1,7 +1,9 @@
+
 TestVisor
 =========
-
-Software to manage automated testing in a virtualized environment.
+This is a mad attempt to formalize automated testing in virtual machines via a web interface. 
+It's demoable at the moment, and maybe even useful to someone, but there is a distinct lack of functionality
+and polish.  
 
 Testing
 -------
@@ -33,19 +35,15 @@ So what to do; reinstall the OS before each test? No, that's stupid.
 Using virtual machines and snapshotting is a far better idea.
 
 
-TestVisor
----------
-This is a mad attempt to formalize automated testing in virtual machines via a web interface. 
-It's demoable at the moment, and maybe even useful to someone, but there is a distinct lack of functionality
-and polish.  
+Details
+-------
+Test plans are written in Javascript(executed on the server with Rhino).
+They decide what tests to run, on what VM, and with what parameters. 
 
-Test plans are written in Javascript(executed on the server with Rhino)
-and decide what tests to run, on what VM, and with what parameters. 
-
-A test is something which can be downloaded and run on a virtual machine,
+A test is something which can be downloaded and run on a virtual machine
 and can also produce results/artifacts. 
 
-TestVisor has pluggable hypervisor modules(currently just VirtualBox),
+There are pluggable hypervisor modules(currently just VirtualBox),
 and pluggable test type modules(currently just Windows batch files). 
 
 
