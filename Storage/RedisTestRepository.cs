@@ -22,7 +22,7 @@ namespace Bizarrefish.TestVisorStorage
 		Stream OpenWithFunction(bool deleteFirst, Func<string, Stream> func)
 		{
 			string fileName = client.GetValueFromHash(hashKey, name);
-			if(fileName == null)
+			if(fileName == null || fileName == "")
 			{
 				throw new Exception("Resource: " + name + " has been removed from the index");
 			}

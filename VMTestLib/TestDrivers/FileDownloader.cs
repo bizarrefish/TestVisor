@@ -41,12 +41,22 @@ namespace Bizarrefish.VMTestLib.TestDrivers.FileDownloader
 				blob.Tests[name] = new List<FileToDownload>();
 				using(var reader = new StreamReader(source))
 				{
-					var parts = reader.ReadToEnd().Split (',');
-					blob.Tests[name].Add(new FileToDownload()
+					while(!reader.EndOfStream)
 					{
-						TargetPath = parts[1],
-						Url = parts[0]
-					});
+						var line = reader.ReadLine ();
+						if(line != null)
+						{
+							var parts = line.Split (',');
+							if(parts.Length == 2)
+							{
+								blob.Tests[name].Add(new FileToDownload()
+								{
+									TargetPath = parts[1],
+									Url = parts[0]
+								});
+							}
+						}
+					}
 				}
 			}
 

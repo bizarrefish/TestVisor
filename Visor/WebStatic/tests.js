@@ -28,7 +28,7 @@ V.testView.OnOpen(function() {
 					first = false;
 				}
 				
-				$(sel).append("<option id=\"" + tt.Id + "\">" + tt.Name + " (" + eStr + ")</option>")
+				$(sel).append("<option value=\"" + tt.Id + "\">" + tt.Name + " (" + eStr + ")</option>")
 				
 				testTypeMapCached[tt.Id] = tt;
 			}
@@ -39,6 +39,8 @@ V.testView.OnOpen(function() {
 	}
 
 	
+	var testListState = null;
+	
 	// Parameter is test type id -> test type obj
 	var RefreshTests = function(testTypeMap) {
 		
@@ -46,13 +48,41 @@ V.testView.OnOpen(function() {
 		
 			DivList_Clear(testList);
 			
+			var data = [];
 			for(var i in tests) {
 				var t = tests[i];
-				DivList_Add(testList, "test-" + (idctr++), t.Name, testTypeMap[t.TestTypeId].Name);
+				data.push({
+					id: t.Name,
+					title: t.Name,
+					description: testTypeMap[t.TestTypeId].Name,
+					updateToken: t.Name
+				});
 			}
+			
+			testListState = DivList_Update(testListState, testList, data);
 			
 		});
 	}
+	
+	var DoTestUpload = function() {
+	
+		var testTypeId = $("#testTypeSelect option:selected").attr('value');
+		
+		var name = window.prompt("Name of this test", "");
+	
+		Tests_GetTestUploadUrl({
+			TypeId: testTypeId,
+			Name: name
+		}, function(url) {
+			var frm = document.getElementById("testUploadForm");
+			frm.action = url
+			frm.submit();
+		});
+	}
+	
+	$("#testUploadButton").unbind('click').click(function() {
+		DoTestUpload();
+	});
 	
 	
 	// Here we go...

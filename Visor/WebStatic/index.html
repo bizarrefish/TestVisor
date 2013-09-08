@@ -17,22 +17,23 @@
 			
 			<div class="module" style="width:30%; padding:10px;float:left;">
 				<div class="heading">Upload</div>
-				
-				<p>
-					<label for="testFile">Test File</label>
-					<input name="testFile" type="file" id="testFile"></input>
-				</p>
-				<p>
-				
-					<label for="testTypeSelect">Test Type</label>
-					<select id="testTypeSelect" name="testTypeSelect">
-						<option>Windows Batch File (.bat)</option>
-						<option>File Download List (.csv)</option>
-					</select>
-				</p>
-				<p>
-					<input type="submit"></input>
-				</p>
+				<form name="uploadForm" id="testUploadForm" method="post" enctype="multipart/form-data">
+					<p>
+						<label for="testFile">Test File</label>
+						<input name="testFile" type="file" id="testFile"></input>
+					</p>
+					<p>
+					
+						<label for="testTypeSelect">Test Type</label>
+						<select id="testTypeSelect" name="testTypeSelect">
+							<option>Windows Batch File (.bat)</option>
+							<option>File Download List (.csv)</option>
+						</select>
+					</p>
+					<p>
+						<input type="button" value="Upload" id="testUploadButton"></input>
+					</p>
+				</form>
 			</div>
 			<div class="module" style="width:50%; float:left">
 				<div class="heading">Installed Tests</div>
@@ -55,17 +56,15 @@
 			</div>
 			
 			<div style="width:80%;float:left">
-				<div class="module editorMenu">
-						<div class="label">Options:</div>
-						<div class="item">Rename</div>
-						<div class="item">Delete</div>
-				</div>
 				<div id="testPlanEditor" class="module">
 					
 					<div class="heading"></div>
+					
 					<div style="text-align:left">
+						<img id="testPlanDeleteButton" class="deleteIcon" title="Delete Test Plan" src="/bin.png"></img>
 						<input type="button" value="Save" id="testPlanSaveButton"></input>
 						<input type="button" value="Run" id="testPlanRunButton"></input>
+						
 					</div>
 					<textarea id="testPlanEditorArea"></textarea>
 					
@@ -113,7 +112,9 @@
 			</div>
 		</div>
 
-		<form id="hiddenForm" style="display:none"></form>
+		<form id="hiddenForm" style="display:none">
+			
+		</form>
 		
 		<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="edit_area/edit_area_full.js"></script>

@@ -50,7 +50,7 @@ namespace Bizarrefish.TestVisorService.Impl
 			
 			foreach(var driver in testDrivers)
 			{
-				driver.Repo = new RedisTestRepository(client, baseDirectory, driver.Id);
+				driver.Repo = new RedisTestRepository(client, baseDirectory + "/" + driver.Id, driver.Id);
 				driverDict[driver.Id] = driver;
 				
 				testTypes.Add (new TestType()

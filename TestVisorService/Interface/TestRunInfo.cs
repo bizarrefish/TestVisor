@@ -12,7 +12,18 @@ namespace Bizarrefish.TestVisorService.Interface
 		public string Id { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		
+
+		public InfoObject()
+		{
+		}
+
+		public InfoObject(InfoObject io)
+		{
+			this.Id = io.Id;
+			this.Name = io.Name;
+			this.Description = io.Description;
+		}
+
 		public override string ToString ()
 		{
 			return GetType().Name + "(" + Name + ")";
@@ -55,6 +66,16 @@ namespace Bizarrefish.TestVisorService.Interface
 	{
 		public TestResult Result;
 		public ArtifactInfo[] Artifacts;
+
+		public TestResultInfo()
+		{
+		}
+
+		public TestResultInfo(TestResultInfo tri)
+		{
+			this.Result = tri.Result;
+			this.Artifacts = tri.Artifacts;
+		}
 	}
 
 	/// <summary>
@@ -66,6 +87,18 @@ namespace Bizarrefish.TestVisorService.Interface
 		public string Detail;
 		public DateTime When;
 		public IDictionary<string, TestResultInfo> Results;
+
+		public TestRunInfo()
+		{
+		}
+
+		public TestRunInfo(TestRunInfo tri) : base(tri)
+		{
+			this.TestPlanId = tri.TestPlanId;
+			this.Detail = tri.Detail;
+			this.When = tri.When;
+			this.Results = tri.Results;
+		}
 	}
 
 	public class HypervisorInfo : InfoObject

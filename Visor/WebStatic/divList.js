@@ -115,7 +115,48 @@ function DivList_Select(list, id) {
 	$(list).children("div.divListItem").removeClass("selected");
 	$(list).children("div.divListItem#" + id).addClass("selected");
 }
-function DivList_GetElements(list)
-{	
+
+var divListIdCtr = 0;
+
+/*
+	stateObject: Don't look in here.
+	list: "jquery string"
+	data: [{id: title: description: icon: updateToken: ( a string which changes to indicate something's changed about the row )}]
+	itemSelected: function(id)
 	
+	returns new state object
+*/
+function DivList_Update(stateObject, list, data, itemSelected)
+{
+	
+	var tokenString = "";
+
+	for(var i in data)
+		tokenString = tokenString + "|" + data[i].updateToken;
+	
+	if(stateObject === null) stateObject = { tokenString: null }
+	
+	// We keep the callback in here, as stateObject is never renewed.
+	stateObject.itemSelected = itemSelected;
+	
+	if(tokenString !== stateObject.tokenString) {
+	
+		DivList_Clear(list);
+		
+		for(var i in data) {
+			var d = data[i];
+			
+			(function(d) {
+				var id = "listItem-" + (divListIdCtr++);
+				DivList_Add(list,  id, d.title, d.description, d.icon, function() {
+					if(stateObject.itemSelected(d.id)) {
+						DivList_Select(list, id);
+					}
+				});
+			})(d);
+		}
+	}
+	
+	stateObject.tokenString = tokenString;
+	return stateObject;
 }

@@ -65,9 +65,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BatchTest.bat" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="JS\" />
   </ItemGroup>
 </Project>

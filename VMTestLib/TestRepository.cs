@@ -37,6 +37,17 @@ namespace Bizarrefish.VMTestLib
 		public string Name;
 		public string Description;
 		public string FileName;
+
+		public ArtifactInfo()
+		{
+		}
+
+		public ArtifactInfo(ArtifactInfo ai)
+		{
+			this.Name = ai.Name;
+			this.Description = ai.Description;
+			this.FileName = ai.FileName;
+		}
 	}
 
 	/// <summary>

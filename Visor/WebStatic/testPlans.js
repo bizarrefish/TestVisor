@@ -23,6 +23,14 @@ V.testPlanView.OnOpen(function() {
 		});
 	}
 	
+	$("#testPlanDeleteButton").unbind('click').click(function() {
+		Plans_Delete({
+			TestPlanId: currentTestPlanId
+		}, function() {
+			RefreshTestPlanList();
+		})
+	});
+	
 	$("#testPlanSaveButton").unbind('click').click(SaveTestPlanSource);
 	
 	$("#testPlanRunButton").unbind('click').click(function() {

@@ -7,6 +7,8 @@ using System.Text;
 
 namespace Bizarrefish.WebLib
 {
+
+
 	public delegate string AjaxCallback<TSessionData>(TSessionData data, string req);
 
 	public class HTTPServer<TSessionData>
@@ -175,7 +177,6 @@ namespace Bizarrefish.WebLib
 						{
 							if(context.Request.HttpMethod != "POST")
 								throw new Exception("Requires POST method");
-
 							streamWriteFunc(streamId, context.Request.InputStream);
 						}
 						else

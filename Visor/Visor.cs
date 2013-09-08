@@ -28,7 +28,7 @@ namespace Visor
 
 		public static void Main(string[] args)
 		{
-			server = new Bizarrefish.WebLib.HTTPServer<VisorSessionData>(8080,"../../WebStatic");
+			server = new Bizarrefish.WebLib.HTTPServer<VisorSessionData>(25565,"../../WebStatic");
 
 			ajaxHandler = new AjaxHandler<VisorSessionData>(server);
 
@@ -50,9 +50,6 @@ namespace Visor
 			ajaxHandler.AddClass<Machines>();
 			ajaxHandler.AddClass<Status>();
 			ajaxHandler.AddClass<Tests>();
-
-
-			Console.WriteLine(streams.GetArtifactUrl("43","A little test",0));
 
 			File.Delete("../../ajax.js");
 			File.WriteAllText("../../WebStatic/ajax.js", ajaxHandler.GetJavascript());

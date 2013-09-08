@@ -51,7 +51,6 @@
     <Compile Include="JSTypes.cs" />
     <Compile Include="AjaxHandler.cs" />
     <Compile Include="HTTPServer.cs" />
-    <Compile Include="AjaxServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -66,7 +66,6 @@ namespace Visor
 
 			public bool Call(VisorSessionData session)
 			{
-				Thread.Sleep(3000);
 				using(Stream s = tvs.WriteTestPlan(TestPlanId))
 				{
 					using(StreamWriter writer = new StreamWriter(s))
@@ -75,6 +74,17 @@ namespace Visor
 						return true;
 					}
 				}
+			}
+		}
+
+		public class Delete : IAjaxMethod<VisorSessionData, bool>
+		{
+			public string TestPlanId;
+
+			public bool Call(VisorSessionData session)
+			{
+				tvs.DeleteTestPlan(TestPlanId);
+				return true;
 			}
 		}
 

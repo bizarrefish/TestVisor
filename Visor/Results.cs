@@ -10,11 +10,40 @@ using System.IO;
 namespace Visor
 {
 
+
 	public class Results
 	{
 		public static ITestVisorService tvs;
 
 		public static Streams<VisorSessionData> streams;
+
+		
+		class WebArtifactInfo : ArtifactInfo
+		{
+			public string DownloadUrl;
+			public WebArtifactInfo(ArtifactInfo ai, string url) : base(ai)
+			{
+				this.DownloadUrl = url;
+			}
+		}
+		
+		static WebArtifactInfo ProcessArtifactInfo(string runId, string testKey, int artifactIndex, ArtifactInfo ai)
+		{
+			return new WebArtifactInfo(ai, streams.GetArtifactUrl(runId, testKey, artifactIndex));
+		}
+
+		static TestRunInfo ProcessTestRunInfo(TestRunInfo tri)
+		{
+			var tri2 = new TestRunInfo(tri);
+			tri2.Results = tri.Results
+				.ToDictionary(a => a.Key, delegate(KeyValuePair<string, TestResultInfo> entry) {
+					var replacement = new TestResultInfo(entry.Value);
+					replacement.Artifacts = entry.Value.Artifacts
+						.Select((ai, i) => ProcessArtifactInfo(tri.Id, entry.Key, i, ai)).ToArray();;
+					return replacement;
+				});
+			return tri2;
+		}
 
 		public class GetTestResults : IAjaxMethod<VisorSessionData, TestRunInfo[]>
 		{
@@ -22,23 +51,13 @@ namespace Visor
 			public int Skip;
 			public int Limit;
 
+
 			public TestRunInfo[] Call(VisorSessionData session)
 			{
-				//Thread.Sleep(1000);	// For realism
 				return tvs.GetTestRuns(Skip, Limit)
-					.Where(tr => tr.TestPlanId == TestPlanId || true).ToArray ();
-			}
-		}
-
-		public class GetArtifactUrl : IAjaxMethod<VisorSessionData, string>
-		{
-			public string RunId;
-			public string TestKey;
-			public int ArtifactIndex;
-
-			public string Call(VisorSessionData session)
-			{
-				return streams.GetArtifactUrl(RunId, TestKey, ArtifactIndex);
+					.Where(tr => tr.TestPlanId == TestPlanId || true)
+						.Select (ProcessTestRunInfo)					// Apply the test result URL
+						.ToArray ();
 			}
 		}
 
@@ -49,7 +68,7 @@ namespace Visor
 
 			public TestRunInfo Call(VisorSessionData session)
 			{
-				return tvs.GetTestRun(Id);
+				return ProcessTestRunInfo(tvs.GetTestRun(Id));
 			}
 		}
 

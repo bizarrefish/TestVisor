@@ -1,6 +1,7 @@
 using System;
 using Bizarrefish.TestVisorService.Interface;
 using System.IO;
+using Bizarrefish.WebLib;
 
 namespace Visor
 {
@@ -12,6 +13,8 @@ namespace Visor
 
 		const string ARTIFACT_KEY = "Artifacts";
 		const string TESTS_KEY = "Tests";
+
+		const string TEST_FILE_FIELD_NAME = "testFile";
 
 		public Streams (Bizarrefish.WebLib.HTTPServer<TSession> server, ITestVisorService tvs)
 		{
@@ -30,7 +33,24 @@ namespace Visor
 			server.AddStreamWriteFunc(TESTS_KEY, (key, stream) => {
 				string testTypeId, testName;
 				SplitTestUploadKey(key, out testTypeId, out testName);
-				tvs.CreateTest(stream, testName, testTypeId);
+
+				string tempFile = Path.GetTempFileName();
+				try
+				{
+					using(var fileStream = File.Open(tempFile, FileMode.OpenOrCreate))
+					{
+						WebUtils.ExtractMultipartFileData(TEST_FILE_FIELD_NAME, stream, fileStream);
+
+						fileStream.Seek (0, SeekOrigin.Begin);
+
+						tvs.CreateTest(fileStream, testName, testTypeId);
+					}
+				}
+				finally
+				{
+					File.Delete(tempFile);
+				}
+
 			});
 		}
 
@@ -43,7 +63,7 @@ namespace Visor
 
 		public string GetTestUploadUrl(string testName, string testTypeId)
 		{
-			string str = testName + ":" + testTypeId;
+			string str = testTypeId + ":" + testName;
 			return server.GetStreamUrl(TESTS_KEY, System.Uri.EscapeDataString(str));
 		}
 

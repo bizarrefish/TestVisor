@@ -3,13 +3,15 @@ var lastInterval;	// Id from setInterval
 V.resultsView.OnOpen(function() {
 	var idctr = 0;
 	var resStart = 0;
-	var resLimit = 5;
+	var resLimit = 10;
 	
 	var selectedRunIndex = -1;
 	var selectedTestKey = "";
 	
 	var refreshEverything = function() {}
 	
+	
+	var artifactListState = null;
 	var RefreshDetails = (function() {
 		var lastArtifactNum = -1;
 		var lastRunId = -1;
@@ -22,21 +24,6 @@ V.resultsView.OnOpen(function() {
 				DivList_Add("div#testResult", "part-" + (idctr++), name, value, icon)
 			}
 
-			var AddArtifact = function(artifactIndex, obj)
-			{
-				DivList_Add("div#artifactList", "artifact-" + (idctr++), obj.Name, obj.FileName, undefined, function() {
-					Results_GetArtifactUrl({
-						RunId: runId,
-						TestKey: testKey,
-						ArtifactIndex: artifactIndex
-					}, function(url) {
-						var frm = document.getElementById("hiddenForm");
-						frm.action = url;
-						frm.method = "GET";
-						frm.submit();
-					});
-				});
-			}
 		
 			if(result === undefined) return;
 			var resultDetails = "div#testResult";
@@ -46,7 +33,6 @@ V.resultsView.OnOpen(function() {
 			var artifactHeading = "div#artifactHeading";
 			
 			DivList_Clear(resultDetails);
-			DivList_Clear(artifactList);
 			
 			$(resultHeading).text(testKey + " Details");
 			$(artifactHeading).text(testKey + " Artifacts");
@@ -62,65 +48,51 @@ V.resultsView.OnOpen(function() {
 			IncludeDetail("StandardOutput", "Standard Output");
 			IncludeDetail("StandardError", "Standard Error");
 			
+			var resultData = [];
 			for(var i in result.Artifacts) {
 				var artifactObj = result.Artifacts[i];
-				AddArtifact(i, artifactObj);
+				var objectId = {runId: runId, testKey: testKey, index: i, Url: artifactObj.DownloadUrl};
+				resultData.push({
+					id: objectId,
+					title: artifactObj.Name,
+					description: artifactObj.FileName,
+					updateToken: runId + ":" + testKey + ":" + i
+				});
 			}
+			
+			artifactListState = DivList_Update(artifactListState, artifacts, resultData, function(oId) {
+				var frm = document.getElementById("hiddenForm");
+				frm.action = oId.Url;
+				frm.method = "GET";
+				frm.submit();
+			});
 		
 		}
 	})();
 	
-	var RefreshRun = (function() {
-		
-		var lastRunResultsLength = -1;
-		var lastRunId;
-		var lastRunStateString;
-		
-		return function(run) {
-		
-			var AddTestResult = function(testKey, result, selectedFunc) {
-				var id = "result-" + (idctr++)
-				var success = result.Result.Success;
-				var icon = success ? "tick.png" : (success !== null ? "cross.png" : "wait.gif");
-				DivList_Add("div#testResultList", id, testKey, "", icon, function() {
-					DivList_Select("div#testResultList", id);
-					selectedFunc();
-				});
-				return id;
-			}
-
-			var resultList = "div#testResultList";
-			var runStateString = JSON.stringify(run);
-			
-			if(runStateString !== lastRunStateString) {
-				// Clear out the list
-				DivList_Clear(resultList);
-				
-				// Load up the list again
-				for(var testKey in run.Results) {
-					var result = run.Results[testKey];
-					
-					// We need to save the test key
-					(function(_selectedTestKey) {
-						
-						var id = AddTestResult(testKey, result, function() {
-							
-							selectedTestKey = _selectedTestKey;
-							refreshEverything();
-							
-						});
-						
-						if(selectedTestKey === _selectedTestKey) {
-							DivList_Select(resultList, id);
-						}
-						
-					})(testKey);
-				}
-				lastRunId = run.Id;
-				lastRunStateString = runStateString;
-			}
+	var resultListState = null;
+	var RefreshRun = function(run) {
+		var resultList = "div#testResultList";
+		var data = [];
+		for(var testKey in run.Results) {
+			var result = run.Results[testKey];
+			var success = result.Result.Success;
+			var icon = success ? "tick.png" : (success !== null ? "cross.png" : "wait.gif");
+			data.push({
+				id: testKey,
+				title: testKey,
+				description: "",
+				icon: icon,
+				updateToken: (success !== null ? success.toString() : "?") + ":" + testKey + ":" + run.Id
+			});
 		}
-	})();
+		
+		resultListState = DivList_Update(resultListState, resultList, data, function(testKey) {
+			selectedTestKey = testKey;
+			refreshEverything();
+			return true;
+		});
+	}
 	
 	
 	var RefreshRunList = (function() {
@@ -147,7 +119,7 @@ V.resultsView.OnOpen(function() {
 				DivList_Clear(runList);
 				
 				// If there are things going on, we have stuff waiting
-				var queueing = status.CurrentTestRun !== null;
+				var queueing = status.CurrentTestRun !== null && runs[0].Id >= status.CurrentTestRun;
 				
 				// Set run.icon and run.desc
 				for(var i in runs) {
@@ -250,7 +222,7 @@ V.resultsView.OnOpen(function() {
 			SwitchRunPage(newStart, resLimit);
 		});
 		
-		SwitchRunPage(0,5);
+		SwitchRunPage(0, resLimit);
 		
 		if(lastInterval !== undefined)
 			clearInterval(lastInterval);

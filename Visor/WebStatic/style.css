@@ -117,6 +117,15 @@ div.module#machineModule div.statusBox#status {
 	float:right;
 }
 
+img.deleteIcon:hover {
+	cursor: pointer;
+}
+
+img.deleteIcon {
+	width:20px;
+	margin:5px;
+}
+
 div#testPlanModule {
 	width: 70%;
 	height: 300px;
