@@ -28,7 +28,7 @@ namespace Visor
 
 		public static void Main(string[] args)
 		{
-			server = new Bizarrefish.WebLib.HTTPServer<VisorSessionData>(25565,"../../WebStatic");
+			server = new Bizarrefish.WebLib.HTTPServer<VisorSessionData>(8080,"../../WebStatic");
 
 			ajaxHandler = new AjaxHandler<VisorSessionData>(server);
 
